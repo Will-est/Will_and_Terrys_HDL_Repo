@@ -1,0 +1,10 @@
+# ignore everything
+*
+# but unignore all directories so git can descend into them
+!*/
+# unignore any folder ending in .srcs (at any depth) …
+!**/*.srcs/
+# … and all of its contents
+!**/*.srcs/**
+# still track this file
+!.gitignore
