@@ -23,4 +23,6 @@
 module test_tb(
 
     );
+    
+    wire test_wire;
 endmodule

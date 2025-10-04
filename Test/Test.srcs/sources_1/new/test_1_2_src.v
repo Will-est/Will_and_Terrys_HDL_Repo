@@ -3,9 +3,9 @@
 // Company: 
 // Engineer: 
 // 
-// Create Date: 10/04/2025 03:15:58 PM
+// Create Date: 10/04/2025 03:18:45 PM
 // Design Name: 
-// Module Name: Test_Src_1
+// Module Name: test_1_2_src
 // Project Name: 
 // Target Devices: 
 // Tool Versions: 
@@ -20,12 +20,7 @@
 //////////////////////////////////////////////////////////////////////////////////
 
 
-module Test_Src_1(
-    
-    );
-    reg test_reg;
-    
-    
-    
-endmodule
+module test_1_2_src(
 
+    );
+endmodule
