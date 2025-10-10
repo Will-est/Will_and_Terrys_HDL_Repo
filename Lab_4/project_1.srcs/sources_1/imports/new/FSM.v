@@ -25,6 +25,8 @@
 // This module was initially written by GPT and then modified
 `timescale 1ns / 1ps
 
+
+// Will's comment
 module FSM (
     input wire clk, 
     input wire [13:0] count_1hz,
