@@ -24,18 +24,14 @@ module DebounceSP(
     input clk,
     input btn_in,
     output btn_out
-    );
+);
     
-    wire ff_en, Q1, Q2, Q3, Q3_bar;
-    
-    
-    db_counter c1(
-        .clk(clk),
-        .slow_clk_en(ff_en)
-    );
-    d_ff d1(.clk(clk), .en(ff_en), .D(btn_in), .Q(Q1));
-    d_ff d2(.clk(clk), .en(ff_en), .D(Q1), .Q(Q2));
-    d_ff d3(.clk(clk), .en(ff_en), .D(Q2), .Q(Q3));
+    wire Q1, Q2, Q3, Q3_bar;
+    // Debounce in Q2
+    d_ff d1(.ff_clk(clk), .D(btn_in), .Q(Q1));
+    d_ff d2(.ff_clk(clk), .D(Q1), .Q(Q2));
+    // Single Pulse output
+    d_ff d3(.ff_clk(clk), .D(Q2), .Q(Q3));
     
     assign Q3_bar = ~Q3;
     assign btn_out = Q2 & Q3_bar;

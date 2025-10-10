@@ -22,14 +22,10 @@
 
 module d_ff(
     input ff_clk,
-    input en,
     input D,
     output reg Q
     );
     always @(posedge ff_clk) begin
-        if(en)
-            Q <= D;
-        else
-            Q <= 1'b0;
+        Q <= D;
     end
 endmodule
