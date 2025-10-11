@@ -27,7 +27,7 @@
 
 
 // Will's comment
-module FSM (
+module FSM(
 
     // inputs
     input wire clk, 

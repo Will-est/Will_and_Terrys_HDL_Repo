@@ -21,6 +21,106 @@
 
 
 module top(
+    input clk,
+    input  wire buttonU,   // Add 10 seconds
+    input  wire buttonL,   // Add 180 seconds
+    input  wire buttonR,   // Add 200 seconds
+    input  wire buttonD,   // Add 550 seconds
 
+    input  wire switch0,
+    input  wire switch1
     );
+    //-----------------------------------------------------------------------------------------
+    // clks
+    //-----------------------------------------------------------------------------------------
+    wire clk_1hz;
+    wire clk_0_5hz;
+    
+    //insert clk dividers here should be find whichever as long as they rise when system rises
+    //-----------------------------------------------------------------------------------------
+    // debounced inputs 
+    //-----------------------------------------------------------------------------------------
+    wire debouncedU, debouncedL, debouncedR, debouncedD, debounced_switch0, debounced_switch1;
+    
+    // buttons
+    DebounceSP debouncer_u(.clk(clk),.btn_in(buttonU),.btn_out(debouncedU));
+    DebounceSP debouncer_l(.clk(clk),.btn_in(buttonL),.btn_out(debouncedL));
+    DebounceSP debouncer_r(.clk(clk),.btn_in(buttonR),.btn_out(debouncedR));
+    DebounceSP debouncer_d(.clk(clk),.btn_in(buttonD),.btn_out(debouncedD));
+    
+    //switches
+    DebounceSP debouncer_sw0(.clk(clk),.btn_in(switch0),.btn_out(debounced_switch0));
+    DebounceSP debouncer_sw1(.clk(clk),.btn_in(switch1),.btn_out(debounced_switch1));
+    
+    //-----------------------------------------------------------------------------------------
+    // combinational Logic to output the inputs to the counter for the add logic and the switch logic
+    //-----------------------------------------------------------------------------------------
+    wire [9:0] button_sum;     // total seconds (max = 940)
+    wire [1:0] switch_concat;  // {switch1, switch0}
+    wire       latched_button; // high if any button is pressed
+    wire       latched_switch; 
+    
+    input_combinational input_comb(
+        // inputs
+        .buttonU(buttonU),
+        .buttonL(buttonL),
+        .buttonR(buttonR),
+        .buttonD(buttonD),
+        .switch0(switch0),
+        .switch1(switch1),
+        
+        // outputs
+        .button_sum(button_sum),
+        .switch_concat(switch_concat),
+        .latched_button(latched_button),
+        .latched_switch(latched_switch)
+    );
+            
+    //-----------------------------------------------------------------------------------------
+    // FSM
+    //-----------------------------------------------------------------------------------------  
+    // counter wire because the counter feeds into the FSM and visa-versa
+    wire [13:0] count;
+    
+    // FSM wires
+    wire [1:0] state;
+    wire fsm_out;
+    wire button_en;
+    wire switch_en;
+    
+    FSM fsm(
+        // inputs
+        .clk(clk), 
+        .clk_1hz(clk_1hz),
+        .count(count),
+        .button_in(latched_button),
+        .switch_in(latched_switch),
+    
+        // outputs
+        .state(state),
+        .fsm_out(fsm_out),
+        .button_en(button_en),
+        .switch_en(switch_en)
+    );
+    
+    //-----------------------------------------------------------------------------------------
+    // counter module
+    //-----------------------------------------------------------------------------------------  
+    counter counter_reg(
+        // inputs
+        .fsm_out(fsm_out),             // trigger from FSM module
+        .clk_1hz(clk_1hz),             // 1Hz clock signal
+        .button_en(button_en),              // button input
+        .switch_en(switch_en),              // switch selector
+        .add_val(button_sum),      // value to add when button pressed
+        .switch_values(switch_concat), // array of 2 reset values
+        
+        // outputs
+        .count_reg(count)
+    ); 
+    //-----------------------------------------------------------------------------------------
+    // BCD
+    //-----------------------------------------------------------------------------------------  
+    
+    
 endmodule
