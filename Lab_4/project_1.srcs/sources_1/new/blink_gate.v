@@ -28,5 +28,26 @@ module blink_gate(
     input [13:0] seconds_bin,
     output reg show 
     );
+    reg one_hz_phase, two_hz_phase;
     
+    // 
+    always @(posedge clk) begin
+        if(tick_1hz)
+            one_hz_phase <= ~one_hz_phase;
+    end
+    
+    always @(posedge clk) begin
+        if(tick_2hz)
+            two_hz_phase <= ~two_hz_phase;
+    end
+        
+    
+    always @(*) begin
+        case(mode)
+            2'b00: show = 1'b1;
+            2'b01: show = (seconds_bin[0] == 1'b0) & one_hz_phase;
+            2'b10: show = two_hz_phase;
+            2'b11: show = 1'b1;
+        endcase
+    end
 endmodule
