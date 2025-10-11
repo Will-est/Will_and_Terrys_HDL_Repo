@@ -122,5 +122,20 @@ module top(
     // BCD
     //-----------------------------------------------------------------------------------------  
     
+    wire [3:0] AN;
+    wire [6:0] SEG;
+    
+    display_top d1(
+        .clk(clk),              // sysclk
+        .bin(count),            // saturated once in counter, once in display
+        .mode(state),           // state for output
+        .tick_1hz(clk_1hz),     // 1 hz clk
+        .tick_2hz(clk_0_5_hz),  // Will I'm pretty sure it's 2 hz lol
+        .An(AN),
+        .Seg(SEG)
+    );
+
+    
+    
     
 endmodule
