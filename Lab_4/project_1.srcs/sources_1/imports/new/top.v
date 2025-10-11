@@ -28,7 +28,9 @@ module top(
     input  wire buttonD,   // Add 550 seconds
 
     input  wire switch0,
-    input  wire switch1
+    input  wire switch1,
+    output wire [3:0] AN,
+    output wire [6:0] SEG
     );
     //-----------------------------------------------------------------------------------------
     // clks
@@ -122,9 +124,6 @@ module top(
     // BCD
     //-----------------------------------------------------------------------------------------  
     
-    wire [3:0] AN;
-    wire [6:0] SEG;
-    
     display_top d1(
         .clk(clk),              // sysclk
         .bin(count),            // saturated once in counter, once in display
@@ -135,7 +134,4 @@ module top(
         .Seg(SEG)
     );
 
-    
-    
-    
 endmodule
