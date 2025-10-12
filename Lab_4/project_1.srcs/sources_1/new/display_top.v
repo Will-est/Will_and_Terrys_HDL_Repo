@@ -28,7 +28,7 @@ module display_top(
     input tick_1hz,
     input tick_2hz,
     output [3:0] An,
-    output [6:0] Seg
+    output[6:0] Seg
     );
     
     wire [3:0] th,hu,te,on;
@@ -39,6 +39,5 @@ module display_top(
     wire show;
     
     blink_gate g1 (.clk(clk), .mode(mode), .tick_1hz(tick_1hz), .tick_2hz(tick_2hz), .seconds_bin(saturated_bin), .show(show));
-    
-    sevenseg_mux m1 (.clk(clk), .reset(reset), .th(th), .hu(hu), .te(te), .on(on), .show(show), .AN(An), .SEG(Seg));
+    sevenseg_mux m1 (.clk(clk), .th(th), .hu(hu), .te(te), .on(on), .show(show), .AN(AN), .SEG(SEG));
 endmodule
