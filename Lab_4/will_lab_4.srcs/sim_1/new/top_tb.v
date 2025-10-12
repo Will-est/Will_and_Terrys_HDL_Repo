@@ -13,6 +13,13 @@ module top_tb;
     // debugging
     wire [13:0] count;
     wire fsm_out;
+    wire debouncedU;
+    wire debouncedL;
+    wire debouncedR;
+    wire debouncedD;
+    wire debounced_switch0;
+    wire debounced_switch1;
+    wire [1:0] state;
     
     // Instantiate DUT
     top uut (
@@ -25,11 +32,17 @@ module top_tb;
         .switch1(switch1),
         .AN(AN),
         .SEG(SEG)
-        
         //debugging comment out if you don't want
         ,
+        .debouncedU_out(debouncedU),
+        .debouncedL_out(debouncedL),
+        .debouncedR_out(debouncedR),
+        .debouncedD_out(debouncedD),
+        .debounced_switch0_out(debounced_switch0),
+        .debounced_switch1_out(debounced_switch1),
         .count_out(count),
-        .fsm_out_out(fsm_out)
+        .fsm_out_out(fsm_out),
+        .state_out(state)
     );
 
     // Clock generation: 10ns period (100 MHz)
