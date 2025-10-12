@@ -26,14 +26,26 @@ module DebounceSP(
     output btn_out
 );
     
-    wire Q1, Q2, Q3, Q3_bar;
-    // Debounce in Q2
-    d_ff d1(.ff_clk(clk), .D(btn_in), .Q(Q1));
-    d_ff d2(.ff_clk(clk), .D(Q1), .Q(Q2));
-    // Single Pulse output
-    d_ff d3(.ff_clk(clk), .D(Q2), .Q(Q3));
+    reg Q1, Q2, Q3, Q3_bar;
+    initial
+    begin
+        Q1 = 0;
+        Q2 = 0;
+        Q3 = 0;
+    end
+//     Debounce in Q2
+//    d_ff d1(.ff_clk(clk), .D(btn_in), .Q(Q1));
+//    d_ff d2(.ff_clk(clk), .D(Q1), .Q(Q2));
+//    // Single Pulse output
+//    d_ff d3(.ff_clk(clk), .D(Q2), .Q(Q3));
+    always@(posedge clk)
+    begin
+        Q1 <=btn_in;
+        Q2 <=Q1;
+        Q3 <=Q2;
+    end
     
-    assign Q3_bar = ~Q3;
-    assign btn_out = Q2 & Q3_bar;
+//    assign Q3_bar = ~Q3;
+    assign btn_out = Q2 & (~Q3);
 endmodule
 
