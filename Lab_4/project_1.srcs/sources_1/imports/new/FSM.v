@@ -54,68 +54,6 @@ module FSM(
         handled_switch =0;
     end
     
-    // FSM to make sure that buttons are only enabled once after you press.
-    // Highly recommend that you shrink this if you aren't debugging it, it is very long
-    always@(posedge clk)
-    begin
-        // button stuff
-        
-        // if you haven't handled the button yet, we need to set the internal_button_en = 1
-        if(!handled_button && button_in)
-        begin
-            internal_button_en <= 1;
-            handled_button <= 1;
-            
-        // if we have handled the button already, we need to check the current button input
-        end else 
-        begin
-        
-            // if the handled_button = 1 but the button is low, we need to reset handled_button
-            if( !button_in) 
-            begin
-                handled_button <= 0;
-                internal_button_en <= 0;
-                
-            // otherwise we keep handled_button the same
-             end else
-             begin  
-                handled_button <= 1;
-                internal_button_en <= 0;
-             end
-        end
-        
-        // switch stuff
-        
-        // if you haven't handled the button yet, we need to set the internal_button_en = 1
-        if(!handled_switch && switch_in)
-        begin
-            internal_switch_en <= 1;
-            handled_switch <= 1;
-            
-        // if we have handled the button already, we need to check the current button input
-        end else 
-        begin
-        
-            // if the handled_button = 1 but the button is low, we need to reset handled_button
-            if( !switch_in) 
-            begin
-                handled_switch <= 0;
-                internal_switch_en <= 0;
-                
-            // otherwise we keep handled_button the same
-             end else
-             begin  
-                handled_switch <= 1;
-                internal_switch_en <= 0;
-             end
-        end
-    end
-    
-    
-    // basically tells the counter that it can be looking at the button/switch input
-    // this comes from/is a part of the stuff above
-    assign button_en = internal_button_en;
-    assign switch_en = internal_switch_en;
     
     
     // State encoding based on count
