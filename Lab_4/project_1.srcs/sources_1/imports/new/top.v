@@ -30,7 +30,10 @@ module top(
     input  wire switch0,
     input  wire switch1,
     output wire [3:0] AN,
-    output wire [6:0] SEG
+    output wire [6:0] SEG,
+    
+    // debugging
+    output count_out
     );
     //-----------------------------------------------------------------------------------------
     // clks
@@ -157,5 +160,11 @@ module top(
         .An(AN),
         .Seg(SEG)
     );
+    
+    //-----------------------------------------------------------------------------------------
+    // Debugging
+    //-----------------------------------------------------------------------------------------  
+    // comment out if you don't need
+    assign count_out = count;
 
 endmodule
