@@ -9,7 +9,10 @@ module top_tb;
     // Outputs
     wire [3:0] AN;
     wire [6:0] SEG;
-
+    
+    // debugging
+    wire [13:0] count;
+    
     // Instantiate DUT
     top uut (
         .clk(clk),
@@ -21,6 +24,10 @@ module top_tb;
         .switch1(switch1),
         .AN(AN),
         .SEG(SEG)
+        
+        //debugging comment out if you don't want
+        ,
+        .count_out(count)
     );
 
     // Clock generation: 10ns period (100 MHz)
