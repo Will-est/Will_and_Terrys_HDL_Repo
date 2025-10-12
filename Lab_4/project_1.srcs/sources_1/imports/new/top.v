@@ -34,7 +34,14 @@ module top(
     
     // debugging
     output [13:0] count_out,
-    output fsm_out_out
+    output fsm_out_out,
+    output debouncedU_out,
+    output debouncedL_out,
+    output debouncedR_out,
+    output debouncedD_out,
+    output debounced_switch0_out,
+    output debounced_switch1_out,
+    output [1:0] state_out
     );
     //-----------------------------------------------------------------------------------------
     // clks
@@ -45,27 +52,11 @@ module top(
     reg [31:0] four_hz_div_val = 32'd8;
     
     // 1 Hz clk
-    clk_divider one_hz_clk(
-        .clk(clk),
-        .clk_bit_select(one_hz_div_val),
-        .reset(1'b0),
-        .slow_clk(clk_1hz)
-    );
+    clk_divider one_hz_clk(.clk(clk),.clk_bit_select(one_hz_div_val),.reset(1'b0),.slow_clk(clk_1hz));
     // 2 Hz clk
-    clk_divider two_hz_clk(
-        .clk(clk),
-        .clk_bit_select(two_hz_div_val),
-        .reset(1'b0),
-        .slow_clk(clk_2hz)
-    );
-    
+    clk_divider two_hz_clk(.clk(clk),.clk_bit_select(two_hz_div_val),.reset(1'b0),.slow_clk(clk_2hz));
     // 4 Hz clk
-    clk_divider four_hz_clk(
-        .clk(clk),
-        .clk_bit_select(four_hz_div_val),
-        .reset(1'b0),
-        .slow_clk(clk_4hz)
-    );
+    clk_divider four_hz_clk(.clk(clk),.clk_bit_select(four_hz_div_val),.reset(1'b0),.slow_clk(clk_4hz));
     
     //-----------------------------------------------------------------------------------------
     // debounced inputs 
@@ -92,12 +83,12 @@ module top(
     
     input_combinational input_comb(
         // inputs
-        .buttonU(buttonU),
-        .buttonL(buttonL),
-        .buttonR(buttonR),
-        .buttonD(buttonD),
-        .switch0(switch0),
-        .switch1(switch1),
+        .buttonU(debouncedU),
+        .buttonL(debouncedL),
+        .buttonR(debouncedR),
+        .buttonD(debouncedD),
+        .switch0(debounced_switch0),
+        .switch1(debounced_switch1),
         
         // outputs
         .button_sum(button_sum),
@@ -168,4 +159,12 @@ module top(
     // comment out if you don't need
     assign count_out = count;
     assign fsm_out_out = fsm_out;
+    assign debouncedU_out = debouncedU;
+    assign debouncedL_out = debouncedL;
+    assign debouncedR_out = debouncedR;
+    assign debouncedD_out = debouncedD;
+    assign debounced_switch0_out = debounced_switch0;
+    assign debounced_switch1_out = debounced_switch1;
+    assign state_out = state;
+    
 endmodule
