@@ -69,7 +69,13 @@ module FSM(
     //      The 1hz clk is high so it needs to decrement
     //      the button is enabled so it needs to do button stuff
     //      the switch is enabled so it needs to do switch stuff
-    assign fsm_out = ((internal_button_en || clk_1hz || internal_button_en) && (~clk));
+    assign fsm_out = ((button_in || clk_1hz || switch_in) && (~clk));
+    
+    // these tell the fsm when it can look at the button/switch input. 
+    // if we don't have any issues with our switch debouncers, then we might get rid of this
+    // and just connect the input combinational straight to the counter
+    assign button_en = button_in;
+    assign switch_en = switch_in;
     
     
 
