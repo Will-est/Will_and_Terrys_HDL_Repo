@@ -12,6 +12,7 @@ module top_tb;
     
     // debugging
     wire [13:0] count;
+    wire fsm_out;
     
     // Instantiate DUT
     top uut (
@@ -27,7 +28,8 @@ module top_tb;
         
         //debugging comment out if you don't want
         ,
-        .count_out(count)
+        .count_out(count),
+        .fsm_out_out(fsm_out)
     );
 
     // Clock generation: 10ns period (100 MHz)

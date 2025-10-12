@@ -33,7 +33,8 @@ module top(
     output wire [6:0] SEG,
     
     // debugging
-    output count_out
+    output [13:0] count_out,
+    output fsm_out_out
     );
     //-----------------------------------------------------------------------------------------
     // clks
@@ -166,5 +167,5 @@ module top(
     //-----------------------------------------------------------------------------------------  
     // comment out if you don't need
     assign count_out = count;
-
+    assign fsm_out_out = fsm_out;
 endmodule
