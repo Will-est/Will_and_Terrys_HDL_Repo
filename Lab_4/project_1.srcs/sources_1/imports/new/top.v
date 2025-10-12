@@ -36,9 +36,9 @@ module top(
     // clks
     //-----------------------------------------------------------------------------------------
     wire clk_1hz, clk_2hz, clk_4hz;
-    reg one_hz_div_val = 9;
-    reg two_hz_div_val = 9;
-    reg four_hz_div_val = 9;
+    reg [31:0] one_hz_div_val = 32'd2;
+    reg [31:0] two_hz_div_val = 32'd4;
+    reg [31:0] four_hz_div_val = 32'd8;
     
     // 1 Hz clk
     clk_divider one_hz_clk(
@@ -81,7 +81,7 @@ module top(
     //-----------------------------------------------------------------------------------------
     // combinational Logic to output the inputs to the counter for the add logic and the switch logic
     //-----------------------------------------------------------------------------------------
-    wire [9:0] button_sum;     // total seconds (max = 940)
+    wire [13:0] button_sum;     // total seconds (max = 940)
     wire [1:0] switch_concat;  // {switch1, switch0}
     wire       latched_button; // high if any button is pressed
     wire       latched_switch; 
