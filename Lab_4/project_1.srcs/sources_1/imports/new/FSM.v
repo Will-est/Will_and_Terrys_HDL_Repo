@@ -61,7 +61,7 @@ module FSM(
         // button stuff
         
         // if you haven't handled the button yet, we need to set the internal_button_en = 1
-        if(!handled_button)
+        if(!handled_button && button_in)
         begin
             internal_button_en <= 1;
             handled_button <= 1;
@@ -71,7 +71,7 @@ module FSM(
         begin
         
             // if the handled_button = 1 but the button is low, we need to reset handled_button
-            if( !button_en) 
+            if( !button_in) 
             begin
                 handled_button <= 0;
                 internal_button_en <= 0;
@@ -87,7 +87,7 @@ module FSM(
         // switch stuff
         
         // if you haven't handled the button yet, we need to set the internal_button_en = 1
-        if(!handled_switch)
+        if(!handled_switch && switch_in)
         begin
             internal_switch_en <= 1;
             handled_switch <= 1;
@@ -97,7 +97,7 @@ module FSM(
         begin
         
             // if the handled_button = 1 but the button is low, we need to reset handled_button
-            if( !switch_en) 
+            if( !switch_in) 
             begin
                 handled_switch <= 0;
                 internal_switch_en <= 0;
@@ -110,6 +110,13 @@ module FSM(
              end
         end
     end
+    
+    
+    // basically tells the counter that it can be looking at the button/switch input
+    // this comes from/is a part of the stuff above
+    assign button_en = internal_button_en;
+    assign switch_en = internal_switch_en;
+    
     
     // State encoding based on count
     // 00 → count == 0
@@ -125,6 +132,7 @@ module FSM(
     //      the button is enabled so it needs to do button stuff
     //      the switch is enabled so it needs to do switch stuff
     assign fsm_out = ((internal_button_en || clk_1hz || internal_button_en) && (~clk));
+    
     
 
 endmodule
