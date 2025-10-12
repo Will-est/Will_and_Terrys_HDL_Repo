@@ -35,10 +35,34 @@ module top(
     //-----------------------------------------------------------------------------------------
     // clks
     //-----------------------------------------------------------------------------------------
-    wire clk_1hz;
-    wire clk_0_5hz;
+    wire clk_1hz, clk_2hz, clk_4hz;
+    reg one_hz_div_val = 9;
+    reg two_hz_div_val = 9;
+    reg four_hz_div_val = 9;
     
-    //insert clk dividers here should be find whichever as long as they rise when system rises
+    // 1 Hz clk
+    clk_divider one_hz_clk(
+        .clk(clk),
+        .clk_bit_select(one_hz_div_val),
+        .reset(1'b0),
+        .slow_clk(clk_1hz)
+    );
+    // 2 Hz clk
+    clk_divider two_hz_clk(
+        .clk(clk),
+        .clk_bit_select(two_hz_div_val),
+        .reset(1'b0),
+        .slow_clk(clk_2hz)
+    );
+    
+    // 4 Hz clk
+    clk_divider four_hz_clk(
+        .clk(clk),
+        .clk_bit_select(four_hz_div_val),
+        .reset(1'b0),
+        .slow_clk(clk_4hz)
+    );
+    
     //-----------------------------------------------------------------------------------------
     // debounced inputs 
     //-----------------------------------------------------------------------------------------
@@ -128,8 +152,8 @@ module top(
         .clk(clk),              // sysclk
         .bin(count),            // saturated once in counter, once in display
         .mode(state),           // state for output
-        .tick_1hz(clk_1hz),     // 1 hz clk
-        .tick_2hz(clk_0_5_hz),  // Will I'm pretty sure it's 2 hz lol
+        .tick_1hz(clk_2hz),     // 1 hz clk
+        .tick_2hz(clk_4hz),  // Will I'm pretty sure it's 2 hz lol
         .An(AN),
         .Seg(SEG)
     );
