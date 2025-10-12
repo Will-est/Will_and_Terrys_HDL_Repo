@@ -24,7 +24,7 @@ module sevenseg_mux(
     input clk, input reset,
     input [3:0] th, hu, te, on,
     input        show,           // gate for blink/blank
-    output reg [3:0] AN,         // anodes (one-hot), check polarity
+    output reg [3:0] AN,         // anodes
     output reg [6:0] SEG
 );
     reg [15:0] div;
@@ -41,7 +41,7 @@ module sevenseg_mux(
     end
 
     always @* begin
-        AN  = 4'b1111;  // all off (for common-anode; invert for your board)
+        AN  = 4'b1111;  // all off 
         SEG = 7'b1111111;
         if (show) begin
             case (sel)
