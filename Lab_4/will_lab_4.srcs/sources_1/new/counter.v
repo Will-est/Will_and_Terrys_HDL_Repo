@@ -17,13 +17,16 @@ module counter (
 
     always @(posedge fsm_out) begin
         case ({switch_en, button_en, clk_1hz})
-            3'b000: count_reg <= count_reg;                                                                // hold
-            3'b001: count_reg <= (count_reg > 14'd0)    ? count_reg - 14'd1 : 14'd0;                       // clk only
-            3'b010: count_reg <= (count_reg < 14'd9999) ? count_reg + add_val : 14'd9999;                  // button only
-            3'b011: count_reg <= (count_reg < 14'd9999) ? count_reg + (add_val - 14'd1) : 14'd9999;        // both high
-            default: count_reg <= (switch_values[0]) ? 10 : 205;                                           // covers all cases when the switches are high
-                                                                    
+            3'b000: count_reg = count_reg;                                                                // hold
+            3'b001: count_reg = (count_reg > 14'd0)    ? count_reg - 14'd1 : 14'd0;                       // clk only
+            3'b010: count_reg = (count_reg < 14'd9999) ? count_reg + add_val : 14'd9999;                  // button only
+            3'b011: count_reg = (count_reg < 14'd9999) ? count_reg + (add_val - 14'd1) : 14'd9999;        // both high
+            default: count_reg = (switch_values[0]) ? 10 : 205;                                           // covers all cases when the switches are high                                                                  
         endcase
+        
+        // if the result from count was negative, make it 0, because it should never be negative
+        if(count_reg[13]==1'b1)
+            count_reg = 14'd0;
     end
 
 endmodule
