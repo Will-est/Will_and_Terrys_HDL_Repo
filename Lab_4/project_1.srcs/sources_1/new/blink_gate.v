@@ -42,11 +42,19 @@ module blink_gate(
     end
         
     
+    
+    /* State Encoding
+    00 -> count < 0             1 sec period 50% duty cycle
+    01 -> 0 < count < 200       2 sec period 50% duty cycle
+    10 -> count >= 200          no flash
+    11 -> nothing               no flash
+    */
+    
     always @(*) begin
         case(mode)
-            2'b00: show = 1'b1;
+            2'b00: show = two_hz_phase;
             2'b01: show = (seconds_bin[0] == 1'b0) & one_hz_phase;
-            2'b10: show = two_hz_phase;
+            2'b10: show = 1'b1;
             2'b11: show = 1'b1;
         endcase
     end

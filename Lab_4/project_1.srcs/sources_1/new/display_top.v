@@ -31,13 +31,52 @@ module display_top(
     output[6:0] Seg
     );
     
-    wire [3:0] th,hu,te,on;
+    
+    // blink gate
+    reg one_hz_phase, two_hz_phase;
+    reg show;
+    always @(posedge clk) begin
+        if(tick_1hz)
+            one_hz_phase <= ~one_hz_phase;
+        if(tick_2hz)
+            two_hz_phase <= ~two_hz_phase;        
+    end
+    
+    always @(*) begin
+        case (mode)
+            2'b00: show = two_hz_phase;
+            2'b01: show = (~bin[0]) & one_hz_phase;
+            default: show = 1'b1;
+        endcase
+    end
+    
+    // bin to bcd
+    reg [3:0] th,hu,te,on;
     //safety saturation
     wire [13:0] saturated_bin = (bin >= 14'd9999) ? 14'd9999 : bin;
-    bin_to_bcd  b1 (.bin(saturated_bin), .th(th), .hu(hu), .te(te), .on(on));
+    integer i;
+    reg [27:0] shift;          // [27:14] BCD, [13:0] bin
+    always @* begin
+        shift = {14'd0, bin};
+        for (i = 0; i < 14; i = i+1) begin
+            // add-3 to each BCD nibble if >= 5
+            if (shift[27:24] >= 5) shift[27:24] = shift[27:24] + 4'd3;
+            if (shift[23:20] >= 5) shift[23:20] = shift[23:20] + 4'd3;
+            if (shift[19:16] >= 5) shift[19:16] = shift[19:16] + 4'd3;
+            if (shift[15:12] >= 5) shift[15:12] = shift[15:12] + 4'd3;
+            shift = shift << 1;
+        end
+        th = shift[27:24]; hu = shift[23:20]; te = shift[19:16]; on = shift[15:12];
+    end
     
-    wire show;
-    
-    blink_gate g1 (.clk(clk), .mode(mode), .tick_1hz(tick_1hz), .tick_2hz(tick_2hz), .seconds_bin(saturated_bin), .show(show));
-    sevenseg_mux m1 (.clk(clk), .th(th), .hu(hu), .te(te), .on(on), .show(show), .AN(AN), .SEG(SEG));
+    // output to lcd
+    lcd_block l1(
+        .clk(clk),
+        .ones(on),
+        .tens(te),
+        .hundreds(hu),
+        .thousands(th),
+        .lcd_out(Seg),
+        .enabled_lcd_out(An)
+    );
 endmodule
