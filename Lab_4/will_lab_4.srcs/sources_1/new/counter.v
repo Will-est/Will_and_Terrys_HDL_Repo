@@ -22,9 +22,9 @@ module counter (
             3'b010: count_reg = count_reg + add_val;                  // button only
             3'b011: count_reg = count_reg + (add_val - 17'd1);        // both high
             3'b100: count_reg = (switch_values[0]) ? 10 : 205;
-            3'b101: count_reg = ((switch_values[0]) ? 10 : 205) - 17'd1;
-            3'b110: count_reg = ((switch_values[0]) ? 10 : 205) + add_val;
-            3'b111: count_reg = ((switch_values[0]) ? 10 : 205) + add_val - 17'd1;
+            3'b101: count_reg = ((switch_values[0]) ? 10 : 205);
+            3'b110: count_reg = ((switch_values[0]) ? 10 : 205);
+            3'b111: count_reg = ((switch_values[0]) ? 10 : 205);
             default: count_reg = count_reg;                                           // covers all cases when the switches are high                                                                  
         endcase
         
