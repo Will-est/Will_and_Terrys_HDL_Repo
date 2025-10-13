@@ -35,6 +35,11 @@ module display_top(
     // blink gate
     reg one_hz_phase, two_hz_phase;
     reg show;
+    initial begin
+        one_hz_phase = 1'b0;
+        two_hz_phase = 1'b0;
+    end
+    
     always @(posedge clk) begin
         if(tick_1hz)
             one_hz_phase <= ~one_hz_phase;
@@ -43,9 +48,12 @@ module display_top(
     end
     
     always @(*) begin
+        show = 1'b1;
         case (mode)
             2'b00: show = two_hz_phase;
-            2'b01: show = (~bin[0]) & one_hz_phase;
+            2'b01: show = one_hz_phase;
+            2'b10: show = 1'b1;
+            2'b11: show = 1'b1;
             default: show = 1'b1;
         endcase
     end
