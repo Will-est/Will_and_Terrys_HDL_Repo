@@ -23,7 +23,7 @@
 module display_top(
     input clk,
     input reset,
-    input [13:0] bin,
+    input [16:0] bin,
     input [1:0] mode,
     input tick_1hz,
     input tick_2hz,
@@ -61,12 +61,12 @@ module display_top(
     // bin to bcd
     reg [3:0] th,hu,te,on;
     //safety saturation
-    wire [13:0] saturated_bin = (bin >= 14'd9999) ? 14'd9999 : bin;
+    wire [16:0] saturated_bin = (bin >= 17'd9999) ? 17'd9999 : bin;
     integer i;
-    reg [27:0] shift;          // [27:14] BCD, [13:0] bin
+    reg [27:0] shift;          // [27:17] BCD, [13:0] bin
     always @* begin
-        shift = {14'd0, bin};
-        for (i = 0; i < 14; i = i+1) begin
+        shift = {17'd0, bin};
+        for (i = 0; i < 17; i = i+1) begin
             // add-3 to each BCD nibble if >= 5
             if (shift[27:24] >= 5) shift[27:24] = shift[27:24] + 4'd3;
             if (shift[23:20] >= 5) shift[23:20] = shift[23:20] + 4'd3;
@@ -78,8 +78,13 @@ module display_top(
     end
     
     // output to lcd
+    // LCD clk stuff
+    wire lcd_clk;
+    reg [31:0] lcd_clk_val = 32'd200011;
+    clk_divider one_hz_clk(.clk(clk),.clk_bit_select(lcd_clk_val),.reset(1'b0),.slow_clk(lcd_clk));
+    
     lcd_block l1(
-        .clk(clk),
+        .clk(lcd_clk),
         .ones(on),
         .tens(te),
         .hundreds(hu),
