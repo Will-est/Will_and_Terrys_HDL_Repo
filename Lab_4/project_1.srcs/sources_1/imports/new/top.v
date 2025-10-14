@@ -148,8 +148,8 @@ module top(
         .clk(clk),              // sysclk
         .bin(count),            // saturated once in counter, once in display
         .mode(state),           // state for output
-        .tick_1hz(clk_2hz),     // 1 hz clk
-        .tick_2hz(clk_4hz),  // Will I'm pretty sure it's 2 hz lol
+        .tick_1hz(clk_1hz),     // 1 hz clk
+        .tick_2hz(clk_2hz),  // Will I'm pretty sure it's 2 hz lol
         .An(AN),
         .Seg(SEG)
     );
