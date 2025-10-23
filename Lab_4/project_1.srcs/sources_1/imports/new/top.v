@@ -30,26 +30,27 @@ module top(
     input  wire switch0,
     input  wire switch1,
     output wire [3:0] AN,
-    output wire [6:0] SEG,
+    output wire [6:0] SEG
     
     // debugging
-    output [13:0] count_out,
-    output fsm_out_out,
-    output debouncedU_out,
-    output debouncedL_out,
-    output debouncedR_out,
-    output debouncedD_out,
-    output debounced_switch0_out,
-    output debounced_switch1_out,
-    output [1:0] state_out
+//    ,
+//    output [13:0] count_out,
+//    output fsm_out_out,
+//    output debouncedU_out,
+//    output debouncedL_out,
+//    output debouncedR_out,
+//    output debouncedD_out,
+//    output debounced_switch0_out,
+//    output debounced_switch1_out,
+//    output [1:0] state_out
     );
     //-----------------------------------------------------------------------------------------
     // clks
     //-----------------------------------------------------------------------------------------
     wire clk_1hz, clk_2hz, clk_4hz;
-    reg [31:0] one_hz_div_val = 32'd2;
-    reg [31:0] two_hz_div_val = 32'd4;
-    reg [31:0] four_hz_div_val = 32'd8;
+    reg [31:0] one_hz_div_val = 32'd100000000;
+    reg [31:0] two_hz_div_val = 32'd50000000;
+    reg [31:0] four_hz_div_val = 32'd25000000;
     
     // 1 Hz clk
     clk_divider one_hz_clk(.clk(clk),.clk_bit_select(one_hz_div_val),.reset(1'b0),.slow_clk(clk_1hz));
@@ -147,8 +148,8 @@ module top(
         .clk(clk),              // sysclk
         .bin(count),            // saturated once in counter, once in display
         .mode(state),           // state for output
-        .tick_1hz(clk_2hz),     // 1 hz clk
-        .tick_2hz(clk_4hz),  // Will I'm pretty sure it's 2 hz lol
+        .tick_1hz(clk_1hz),     // 1 hz clk
+        .tick_2hz(clk_2hz),  // Will I'm pretty sure it's 2 hz lol
         .An(AN),
         .Seg(SEG)
     );
@@ -156,15 +157,15 @@ module top(
     //-----------------------------------------------------------------------------------------
     // Debugging
     //-----------------------------------------------------------------------------------------  
-    // comment out if you don't need
-    assign count_out = count;
-    assign fsm_out_out = fsm_out;
-    assign debouncedU_out = debouncedU;
-    assign debouncedL_out = debouncedL;
-    assign debouncedR_out = debouncedR;
-    assign debouncedD_out = debouncedD;
-    assign debounced_switch0_out = debounced_switch0;
-    assign debounced_switch1_out = debounced_switch1;
-    assign state_out = state;
+//    // comment out if you don't need
+//    assign count_out = count;
+//    assign fsm_out_out = fsm_out;
+//    assign debouncedU_out = debouncedU;
+//    assign debouncedL_out = debouncedL;
+//    assign debouncedR_out = debouncedR;
+//    assign debouncedD_out = debouncedD;
+//    assign debounced_switch0_out = debounced_switch0;
+//    assign debounced_switch1_out = debounced_switch1;
+//    assign state_out = state;
     
 endmodule

@@ -32,7 +32,7 @@ module FSM(
     // inputs
     input wire clk, 
     input wire clk_1hz,
-    input wire [13:0] count,
+    input wire [16:0] count,
     input wire button_in,
     input wire switch_in,
     
@@ -60,8 +60,8 @@ module FSM(
     // 00 → count == 0
     // 01 → count < 200
     // 10 → count >= 200
-    assign state = (count == 14'd0)   ? 2'b00 :
-                   (count <  14'd200) ? 2'b01 :
+    assign state = (count == 17'd0)   ? 2'b00 :
+                   (count <  17'd200) ? 2'b01 :
                                             2'b10;
 
     

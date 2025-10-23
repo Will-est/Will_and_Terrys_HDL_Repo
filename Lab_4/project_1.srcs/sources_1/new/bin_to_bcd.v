@@ -21,14 +21,14 @@
 
 
 module bin_to_bcd(
-    input  [13:0] bin,         // 0..9999
+    input  [16:0] bin,         // 0..9999
     output reg [3:0] th, hu, te, on
 );
   integer i;
   reg [27:0] shift;          // [27:14] BCD, [13:0] bin
     always @* begin
-        shift = {14'd0, bin};
-        for (i = 0; i < 14; i = i+1) begin
+        shift = {17'd0, bin};
+        for (i = 0; i < 17; i = i+1) begin
             // add-3 to each BCD nibble if >= 5
             if (shift[27:24] >= 5) shift[27:24] = shift[27:24] + 4'd3;
             if (shift[23:20] >= 5) shift[23:20] = shift[23:20] + 4'd3;

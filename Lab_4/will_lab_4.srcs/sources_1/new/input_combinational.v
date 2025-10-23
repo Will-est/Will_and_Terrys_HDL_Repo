@@ -20,17 +20,17 @@ module input_combinational(
     input  wire switch0,
     input  wire switch1,
 
-    output wire [13:0] button_sum,     // total seconds (max = 940)
+    output wire [16:0] button_sum,     // total seconds (max = 940)
     output wire [1:0] switch_concat,  // {switch1, switch0}
     output wire       latched_button, // high if any button is pressed
     output wire       latched_switch  // high if any switch is high
 );
 
     // Button addition logic (weighted by their assigned seconds)
-    assign button_sum =  (buttonU ? 14'd10  : 14'd0) +
-                         (buttonL ? 14'd180 : 14'd0) +
-                         (buttonR ? 14'd200 : 14'd0) +
-                         (buttonD ? 14'd550 : 14'd0);
+    assign button_sum =  (buttonU ? 17'd10  : 17'd0) +
+                         (buttonL ? 17'd180 : 17'd0) +
+                         (buttonR ? 17'd200 : 17'd0) +
+                         (buttonD ? 17'd550 : 17'd0);
 
     // Concatenate switches
     assign switch_concat = {switch1, switch0};

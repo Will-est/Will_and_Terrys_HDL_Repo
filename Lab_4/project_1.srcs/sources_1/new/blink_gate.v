@@ -25,7 +25,7 @@ module blink_gate(
     input [1:0] mode,
     input tick_1hz,
     input tick_2hz,
-    input [13:0] seconds_bin,
+    input [17:0] seconds_bin,
     output reg show 
     );
     reg one_hz_phase, two_hz_phase;
