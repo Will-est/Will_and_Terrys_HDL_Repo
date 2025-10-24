@@ -71,8 +71,8 @@ module top(
     DebounceSP debouncer_d(.clk(clk),.btn_in(buttonD),.btn_out(debouncedD));
     
     //switches
-    switch_debounce debouncer_sw0(.clk(clk),.btn_in(switch0),.btn_out(debounced_switch0));
-    switch_debounce debouncer_sw1(.clk(clk),.btn_in(switch1),.btn_out(debounced_switch1));
+    DebounceSP debouncer_sw0(.clk(clk),.btn_in(switch0),.btn_out(debounced_switch0));
+    DebounceSP debouncer_sw1(.clk(clk),.btn_in(switch1),.btn_out(debounced_switch1));
     
     //-----------------------------------------------------------------------------------------
     // combinational Logic to output the inputs to the counter for the add logic and the switch logic
