@@ -61,7 +61,7 @@ module top(
         .data_out_ctrl(data_out_ctrl),
         .btn_pulse(btn_pulse),
         .sw(sw),
-        .led(led),
+        .leds(led),
         .dvr(dvr)
     );
     
