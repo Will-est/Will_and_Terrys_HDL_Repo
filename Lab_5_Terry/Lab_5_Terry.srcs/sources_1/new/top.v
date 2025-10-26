@@ -48,7 +48,7 @@ module top(
     
     // tri-state buffer stuff
     assign data_bus = (cs && we) ? data_out_ctrl : 8'bz;
-    assign data_bus = (cs && ~we) ? data_out_mem : 8'bz;
+
     
     // controller
     wire [7:0] dvr;

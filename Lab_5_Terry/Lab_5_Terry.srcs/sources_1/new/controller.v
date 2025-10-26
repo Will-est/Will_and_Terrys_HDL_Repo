@@ -52,6 +52,7 @@ module controller(
         dar = 7'h00;
         dvr = 8'h00;
         var_a = 8'h00;
+        var_b = 8'h00;
         sum = 8'h00;
         diff = 8'h00;
     end
@@ -103,102 +104,77 @@ module controller(
     reg [4:0] ps, ns;
     initial ps = idle;
     
+    // combinational next state + control signal
     always @* begin
-        ns = ps;
-        case (ps)
-            idle: begin
-                if (~M1 & ~M0 &  A0) ns = push_1;
-                else if (~M1 & ~M0 &  A1) ns = pop;
-                else if (~M1 &  M0 &  A0) ns = add_1;
-                else if (~M1 &  M0 &  A1) ns = sub_1;
-                else if ( M1 & ~M0 &  A0) ns = top;
-                else if ( M1 & ~M0 &  A1) ns = clear;
-                else if ( M1 &  M0 &  A0) ns = inc;
-                else if ( M1 &  M0 &  A1) ns = dec;
-            end
-
-            // push
-            push_1:   ns = push_2;
-            push_2:   ns = memrd_1;
-
-            // pop
-            pop:    ns = memrd_1;
-
-            // add sequence (2 reads, 1 write)
-            add_1:    ns = add_2;
-            add_2:    ns = add_3;
-            add_3:    ns = add_4;
-            add_4:    ns = add_5;
-            add_5:    ns = add_6;
-            add_6:    ns = memrd_1;
-
-            // sub sequence (2 reads, 1 write)
-            sub_1:    ns = sub_2;
-            sub_2:    ns = sub_3;
-            sub_3:    ns = sub_4;
-            sub_4:    ns = sub_5;
-            sub_5:    ns = sub_6;
-            sub_6:    ns = memrd_1;
-
-            // simple ops jump to memory read
-            top, inc, dec, clear: ns = memrd_1;
-
-            // memory read (2 cycles)
-            memrd_1: ns = memrd_2;
-            memrd_2: ns = idle;
-        endcase
-    end
-
-    // -------------------------------------------------
-    // Outputs/combinational control with DEFAULTS
-    // -------------------------------------------------
-    always @* begin
-        // DEFAULTS every cycle (prevents latches & sticky WE)
-        cs            = 1'b0;
-        we            = 1'b0;
-        addr          = dar;         // harmless default
+        ns = ps;         // stay in same state unless changed
+        cs = 1'b0;
+        we = 1'b0;
+        addr = dar;
         data_out_ctrl = 8'h00;
-
-        // OUTPUTS PER STATE (override defaults)
-        case (ps)
+        case(ps)
+            idle: begin
+                if (~M1 & ~M0 & A0) ns = push_1;
+                else if (~M1 & ~M0 & A1) ns = pop;
+                else if (~M1 & M0 & A0) ns = add_1;
+                else if (~M1 & M0 & A1) ns = sub_1;
+                else if (M1 & ~M0 & A0) ns = top;
+                else if (M1 & ~M0 & A1) ns = clear;
+                else if (M1 & M0 & A0) ns = inc;
+                else if (M1 & M0 & A1) ns = dec;
+            end
+            // push
             push_1: begin
-                cs            = 1'b1;
-                we            = 1'b1;
-                addr          = spr;
-                data_out_ctrl = sw;  // write switches to MEM[SPR]
+                cs = 1; we = 1; addr = spr; data_out_ctrl = sw;
+                ns = push_2;
+            end 
+            push_2:
+                ns = memrd_1;
+            pop:
+                ns = memrd_1;
+            add_1: begin
+                cs = 1; we = 0; addr = spr + 1;
+                ns = add_2;
             end
-
-            // optional: hold WE for an extra state if you want a guaranteed negedge write window
-            // push_2: (no outputs needed; register updates happen in sequential block)
-
-            add_1: begin // read A @ SPR+1
-                cs   = 1'b1; we = 1'b0; addr = spr + 7'd1;
+            add_2:
+                ns = add_3;
+            add_3: begin
+                cs = 1; we = 0; addr = spr + 2;
+                ns = add_4;
             end
-            add_3: begin // read B @ SPR+2
-                cs   = 1'b1; we = 1'b0; addr = spr + 7'd2;
+            add_4:
+                ns = add_5;
+            add_5: begin
+                cs = 1; we = 1; addr = spr + 2; data_out_ctrl = sum;
+                ns = add_6;
             end
-            add_5: begin // write SUM @ SPR+2
-                cs            = 1'b1; we = 1'b1;
-                addr          = spr + 7'd2;
-                data_out_ctrl = sum;
+            add_6:
+                ns = memrd_1;
+            sub_1: begin
+                cs = 1; we = 0; addr = spr + 1;
+                ns = sub_2;
             end
-
-            sub_1: begin // read A @ SPR+1
-                cs   = 1'b1; we = 1'b0; addr = spr + 7'd1;
+            sub_2:
+                ns = sub_3;
+            sub_3: begin
+                cs = 1; we = 0; addr = spr + 2;
+                ns = sub_4;
             end
-            sub_3: begin // read B @ SPR+2
-                cs   = 1'b1; we = 1'b0; addr = spr + 7'd2;
+            sub_4:
+                ns = sub_5;
+            sub_5: begin
+                cs = 1; we = 1; addr = spr + 2; data_out_ctrl = diff;
+                ns = sub_6;
             end
-            sub_5: begin // write DIFF @ SPR+2
-                cs            = 1'b1; we = 1'b1;
-                addr          = spr + 7'd2;
-                data_out_ctrl = diff;
+            sub_6:
+                ns = memrd_1;
+            top, inc, dec, clear:
+                ns = memrd_1;
+            memrd_1: begin
+                cs = 1; we = 0; addr = dar;
+                ns = memrd_2;
             end
-
-            top, inc, dec, clear,
-            memrd_1: begin // generic DVR refresh @ DAR
-                cs   = 1'b1; we = 1'b0; addr = dar;
-            end
+            memrd_2:
+                ns = idle;
         endcase
     end
     // rest of the memory stuff
@@ -238,8 +214,4 @@ module controller(
             end
         endcase
     end             
-    // led stuff
-    assign leds = {empty, dar};  // LED[7]=EMPTY flag, LED[6:0]=DAR[6:0]
-
-    
 endmodule
