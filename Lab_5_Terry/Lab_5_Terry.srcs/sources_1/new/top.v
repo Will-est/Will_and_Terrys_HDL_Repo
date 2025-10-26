@@ -57,7 +57,7 @@ module top(
         .cs(cs),
         .we(we),
         .addr(addr),
-        .data_in(data_bus),
+        .data_in(data_out_mem),
         .data_out_ctrl(data_out_ctrl),
         .btn_pulse(btn_pulse),
         .sw(sw),
