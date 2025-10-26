@@ -191,7 +191,7 @@ module controller(
             end
             push_2: begin
                spr <= spr - 7'd1;
-               spr <= spr + 7'd1;
+               dar <= spr;
             end
             pop: begin
                 spr <= spr + 7'd1;
