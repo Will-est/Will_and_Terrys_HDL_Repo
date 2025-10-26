@@ -233,4 +233,5 @@ module controller(
             end
         endcase
     end             
+    assign leds = {empty, dar};
 endmodule
