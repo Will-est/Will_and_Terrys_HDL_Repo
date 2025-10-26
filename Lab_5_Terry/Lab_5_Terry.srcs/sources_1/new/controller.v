@@ -200,8 +200,7 @@ module controller(
         ps <= ns;
         case(ps)
             add_2: var_a <= data_in;
-            add_4: var_b <= data_in;
-            add_5: sum <= var_b + var_a;
+            add_4: sum   <=  data_in + var_a ;
             add_6: begin
                spr <= spr + 7'd1;
                dar <= spr + 7'd2;
