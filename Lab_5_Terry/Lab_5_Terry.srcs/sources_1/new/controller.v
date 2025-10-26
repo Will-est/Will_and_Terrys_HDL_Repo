@@ -135,14 +135,18 @@ module controller(
                 cs = 1; we = 0; addr = spr + 1;
                 ns = add_2;
             end
-            add_2:
+            add_2: begin
+                cs = 1; we = 0; addr = spr + 7'd1 ;
                 ns = add_3;
+            end
             add_3: begin
                 cs = 1; we = 0; addr = spr + 2;
                 ns = add_4;
             end
-            add_4:
+            add_4: begin
+                cs = 1; we = 0; addr = spr + 2;
                 ns = add_5;
+            end
             add_5: begin
                 cs = 1; we = 1; addr = spr + 2; data_out_ctrl = sum;
                 ns = add_6;
@@ -153,14 +157,18 @@ module controller(
                 cs = 1; we = 0; addr = spr + 1;
                 ns = sub_2;
             end
-            sub_2:
+            sub_2: begin
+                cs = 1; we = 1; addr = spr + 1;
                 ns = sub_3;
+            end
             sub_3: begin
                 cs = 1; we = 0; addr = spr + 2;
                 ns = sub_4;
             end
-            sub_4:
+            sub_4: begin
+                cs = 1; we = 0; addr = spr + 2;
                 ns = sub_5;
+            end
             sub_5: begin
                 cs = 1; we = 1; addr = spr + 2; data_out_ctrl = diff;
                 ns = sub_6;
