@@ -32,8 +32,10 @@ module top(
 );
  // btn[3:0] -> btnU, btnL, btnR, btnD
     wire btn_u, btn_l, btn_r, btn_d;
-    DebounceSP DBU(.clk(clk), .btn_in(btn[3]), .btn_out(btn_u));
-    DebounceSP DBL(.clk(clk), .btn_in(btn[2]), .btn_out(btn_l));
+//    DebounceSP DBU(.clk(clk), .btn_in(btn[3]), .btn_out(btn_u));
+//    DebounceSP DBL(.clk(clk), .btn_in(btn[2]), .btn_out(btn_l));
+    assign btn_u = btn[3];
+    assign btn_l = btn[2];
     DebounceSP DBR(.clk(clk), .btn_in(btn[1]), .btn_out(btn_r));
     DebounceSP DBD(.clk(clk), .btn_in(btn[0]), .btn_out(btn_d));
     

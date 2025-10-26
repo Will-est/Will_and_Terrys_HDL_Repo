@@ -199,7 +199,7 @@ module controller(
             end
             pop: begin
                 spr <= spr + 7'd1;
-                dar <= spr + 7'd1;
+                dar <= spr + 7'd2;
             end
             top: dar <= spr + 7'd1;
             inc: dar <= dar + 7'd1;
