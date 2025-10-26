@@ -35,7 +35,7 @@ module hex_bcd_2bit(
             sel <= ~sel;
     end
     
-    wire[3:0] nib = sel ? bin[3:0] : bin[7:4];
+    wire[3:0] nib = sel ? bin[7:4] : bin[3:0];
     
     hex_bcd h1(
         .hex(nib),
