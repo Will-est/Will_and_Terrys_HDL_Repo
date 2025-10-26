@@ -84,12 +84,12 @@ module controller(
         push_2 = 5'd2,
         pop = 5'd3,
         add_1 = 5'd4,
-        add_buff_1_1 = 5'd22, 
-        add_buff_1_2 = 5'd22,
+//        add_buff_1_1 = 5'd22, 
+//        add_buff_1_2 = 5'd22,
         add_2 = 5'd5,
         add_3 = 5'd6,
-        add_buff_2_1 = 5'd23, 
-        add_buff_2_2 = 5'd23, 
+//        add_buff_2_1 = 5'd23, 
+//        add_buff_2_2 = 5'd23, 
         add_4 = 5'd7,
         add_5 = 5'd8,
         add_6 = 5'd9,
@@ -137,22 +137,22 @@ module controller(
                 ns = memrd_1;
             add_1: begin
                 cs = 1; we = 0; addr = spr + 1;
-                ns = add_buff_1;
-            end
-            add_buff_1: begin
                 ns = add_2;
             end
+//            add_buff_1: begin
+//                ns = add_2;
+//            end
             add_2: begin
-                cs = 1; we = 0; addr = spr + 7'd1 ;
+                cs = 1; we = 0; addr = spr + 1;
                 ns = add_3;
             end
             add_3: begin
                 cs = 1; we = 0; addr = spr + 2;
-                ns = add_buff_2;
-            end
-            add_buff_2: begin
                 ns = add_4;
             end
+//            add_buff_2: begin
+//                ns = add_4;
+//            end
             add_4: begin
                 cs = 1; we = 0; addr = spr + 2;
                 ns = add_5;
