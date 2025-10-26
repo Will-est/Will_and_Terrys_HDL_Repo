@@ -83,9 +83,13 @@ module controller(
         push_1 = 5'd1,
         push_2 = 5'd2,
         pop = 5'd3,
-        add_1 = 5'd4, 
+        add_1 = 5'd4,
+        add_buff_1_1 = 5'd22, 
+        add_buff_1_2 = 5'd22,
         add_2 = 5'd5,
         add_3 = 5'd6,
+        add_buff_2_1 = 5'd23, 
+        add_buff_2_2 = 5'd23, 
         add_4 = 5'd7,
         add_5 = 5'd8,
         add_6 = 5'd9,
@@ -133,6 +137,9 @@ module controller(
                 ns = memrd_1;
             add_1: begin
                 cs = 1; we = 0; addr = spr + 1;
+                ns = add_buff_1;
+            end
+            add_buff_1: begin
                 ns = add_2;
             end
             add_2: begin
@@ -141,6 +148,9 @@ module controller(
             end
             add_3: begin
                 cs = 1; we = 0; addr = spr + 2;
+                ns = add_buff_2;
+            end
+            add_buff_2: begin
                 ns = add_4;
             end
             add_4: begin
@@ -190,16 +200,17 @@ module controller(
         ps <= ns;
         case(ps)
             add_2: var_a <= data_in;
-            add_4: sum <= data_in + var_a;
+            add_4: var_b <= data_in;
+            add_5: sum <= var_b + var_a;
             add_6: begin
                spr <= spr + 7'd1;
-               dar <= spr + 7'd1;
+               dar <= spr + 7'd2;
             end
             sub_2: var_a <= data_in;
             sub_4: diff <= data_in - var_a;
             sub_6: begin
                 spr <= spr + 7'd1;
-                dar <= spr + 7'd1;
+                dar <= spr + 7'd2;
             end
             push_2: begin
                spr <= spr - 7'd1;
