@@ -30,17 +30,20 @@ module top(
     output [6:0]  seg,
     output [3:0]  an
 );
+    reg clk_50Mhz = 1'b0;
+    always @(posedge clk)
+        clk_50Mhz <= ~clk_50Mhz;
+
  // btn[3:0] -> btnU, btnL, btnR, btnD
     wire btn_u, btn_l, btn_r, btn_d;
 //    DebounceSP DBU(.clk(clk), .btn_in(btn[3]), .btn_out(btn_u));
 //    DebounceSP DBL(.clk(clk), .btn_in(btn[2]), .btn_out(btn_l));
     assign btn_u = btn[3];
     assign btn_l = btn[2];
-    DebounceSP DBR(.clk(clk), .btn_in(btn[1]), .btn_out(btn_r));
-    DebounceSP DBD(.clk(clk), .btn_in(btn[0]), .btn_out(btn_d));
+    DebounceSP DBR(.clk(clk_50Mhz), .btn_in(btn[1]), .btn_out(btn_r));
+    DebounceSP DBD(.clk(clk_50Mhz), .btn_in(btn[0]), .btn_out(btn_d));
     
     wire [3:0] btn_pulse = {btn_u, btn_l, btn_r, btn_d};
-    
     // data + mem signals that goes onto buses
     wire cs, we;
     wire [6:0] addr;
@@ -54,8 +57,8 @@ module top(
     
     // controller
     wire [7:0] dvr;
-    controller c1(
-        .clk(clk),
+    controller ct1(
+        .clk(clk_50Mhz),
         .cs(cs),
         .we(we),
         .addr(addr),
@@ -69,7 +72,7 @@ module top(
     
     // memory
     memory m1(
-        .clock(clk),
+        .clock(clk_50Mhz),
         .cs(cs),
         .we(we),
         .address(addr),
@@ -79,7 +82,7 @@ module top(
     
     // BCD
     hex_bcd_2bit h1(
-        .clk(clk),
+        .clk(clk_50Mhz),
         .bin(dvr),
         .seg(seg),
         .an(an)
