@@ -42,12 +42,12 @@ module top (
 );
     
      // initial arrays you are given
-    reg [7:0] Big_Arr_A [4:0][2:0];
-    reg [7:0] Big_Arr_B [4:0][2:0];
+    reg [7:0] Big_Arr_A [5:0][2:0];
+    reg [7:0] Big_Arr_B [5:0][2:0];
     
     // previous values of the arrays
-    reg [7:0] Big_Arr_A_Prev [4:0][2:0];
-    reg [7:0] Big_Arr_B_Prev [4:0][2:0];
+    reg [7:0] Big_Arr_A_Prev [5:0][2:0];
+    reg [7:0] Big_Arr_B_Prev [5:0][2:0];
     reg [7:0] Buffered_Output_Matrix [2:0][2:0];
     
     // Values of the 
@@ -76,6 +76,7 @@ module top (
         Big_Arr_A[2][0] = arr_A2_0; Big_Arr_A[2][1] = arr_A1_1; Big_Arr_A[2][2] = arr_A0_2;
         Big_Arr_A[3][0] = 8'd0;     Big_Arr_A[3][1] = arr_A2_1; Big_Arr_A[3][2] = arr_A1_2;
         Big_Arr_A[4][0] = 8'd0;     Big_Arr_A[4][1] = 8'd0;     Big_Arr_A[4][2] = arr_A2_2;
+        Big_Arr_A[5][0] = 8'd0;     Big_Arr_A[5][1] = 8'd0;     Big_Arr_A[5][2] = 8'd0;
         
         // Matrix B → Big_Arr_B
         Big_Arr_B[0][0] = arr_B0_0; Big_Arr_B[0][1] = 8'd0;     Big_Arr_B[0][2] = 8'd0;
@@ -83,6 +84,7 @@ module top (
         Big_Arr_B[2][0] = arr_B0_2; Big_Arr_B[2][1] = arr_B1_1; Big_Arr_B[2][2] = arr_B2_0;
         Big_Arr_B[3][0] = 8'd0;     Big_Arr_B[3][1] = arr_B1_2; Big_Arr_B[3][2] = arr_B2_1;
         Big_Arr_B[4][0] = 8'd0;     Big_Arr_B[4][1] = 8'd0;     Big_Arr_B[4][2] = arr_B2_2;
+        Big_Arr_B[5][0] = 8'd0;     Big_Arr_B[5][1] = 8'd0;     Big_Arr_B[5][2] = 8'd0;
     end
 
     // Shifts through the row/column of the matrices when inputs change

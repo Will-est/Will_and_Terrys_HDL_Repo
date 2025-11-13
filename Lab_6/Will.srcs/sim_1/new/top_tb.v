@@ -96,7 +96,7 @@ module top_tb;
     end
 
     // DUT Instantiation
-    top_2 DUT(
+    top DUT(
     .clk(clk),
     .start(start),
     .reset(reset),
