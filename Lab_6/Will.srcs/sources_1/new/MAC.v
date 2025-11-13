@@ -25,6 +25,7 @@
 // ==========================================
 module MAC (
     input wire clk,
+    input wire reset,
     input wire [7:0] a_in,
     input wire [7:0] b_in,
     output reg [7:0] a_out,
@@ -32,9 +33,10 @@ module MAC (
     output reg [7:0] c_out
 );
 
-    reg [7:0] acc;  // 8-bit floating point accumulator
     wire [7:0] mult_res;
     wire [7:0] add_res;
+    reg [7:0] acc;  // 8-bit floating point accumulator
+    initial acc = 8'd0;
 
     // Instantiate combinational FP units
     FP_Multiplier u_mult (
@@ -49,14 +51,19 @@ module MAC (
         .out(add_res)
     );
 
-    always @(posedge clk) begin
-        // propagate input values through systolic grid
-        a_out <= a_in;
-        b_out <= b_in;
-
-        // update accumulation with FP addition
-        acc   <= add_res;
-        c_out <= acc;
+    always @(posedge clk or reset) 
+    begin
+        if(reset) begin
+            acc <= 8'd0;
+        end else begin
+            // propagate input values through systolic grid
+            a_out <= a_in;
+            b_out <= b_in;
+    
+            // update accumulation with FP addition
+            acc <= (^add_res === 1'bx) ? 8'd0 : add_res;
+            c_out <= add_res;
+        end
     end
 
 endmodule

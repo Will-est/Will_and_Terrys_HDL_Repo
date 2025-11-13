@@ -18,7 +18,7 @@
 // Additional Comments:
 // 
 //////////////////////////////////////////////////////////////////////////////////
-module top (
+module top_2 (
     input wire clk,
     input wire start,
     input wire reset,
