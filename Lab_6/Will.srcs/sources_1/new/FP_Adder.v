@@ -188,7 +188,7 @@ module FP_Adder (
         end
     end
     
-    assign y = packed;
+    assign out = packed;
 
 endmodule
 
