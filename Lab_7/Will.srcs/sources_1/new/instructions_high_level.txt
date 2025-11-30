@@ -1,0 +1,99 @@
+// instructions.txt - MIPS Test Program
+// Format: 32-bit hex values, one per line
+// Each line represents one instruction at sequential memory addresses
+
+// Test Program: Comprehensive instruction test
+// ============================================
+
+// Initialize registers with immediate values
+20020005  // addi $2, $0, 5        - $2 = 5
+20030003  // addi $3, $0, 3        - $3 = 3
+2004000A  // addi $4, $0, 10       - $4 = 10
+20050002  // addi $5, $0, 2        - $5 = 2
+2406FFFF  // addiu $6, $0, -1      - $6 = -1 (0xFFFFFFFF)
+
+// R-type Arithmetic: ADD, SUB, ADDU, SUBU
+00430820  // add $1, $2, $3        - $1 = 5 + 3 = 8
+00443822  // sub $7, $2, $4        - $7 = 5 - 10 = -5
+00454021  // addu $8, $2, $5       - $8 = 5 + 2 = 7
+00854823  // subu $9, $4, $5       - $9 = 10 - 2 = 8
+
+// Multiplication and Division
+00430018  // mult $2, $3           - HI:LO = 5 * 3 = 15
+00000812  // mflo $1               - $1 = 15 (low part)
+00000010  // mfhi $0               - $0 = 0 (high part, discarded)
+
+00440019  // multu $2, $4          - HI:LO = 5 * 10 = 50
+00005012  // mflo $10              - $10 = 50
+
+00A4001A  // div $5, $4            - LO = 2/10 = 0, HI = 2%10 = 2
+00005812  // mflo $11              - $11 = 0 (quotient)
+00006010  // mfhi $12              - $12 = 2 (remainder)
+
+00A5001B  // divu $5, $5           - LO = 2/2 = 1, HI = 0
+00006812  // mflo $13              - $13 = 1
+
+// Logical operations: AND, OR, ANDI, ORI
+00437024  // and $14, $2, $3       - $14 = 5 & 3 = 1
+00437825  // or $15, $2, $3        - $15 = 5 | 3 = 7
+30500003  // andi $16, $2, 3       - $16 = 5 & 3 = 1
+34510007  // ori $17, $2, 7        - $17 = 5 | 7 = 7
+
+// Shift operations: SLL, SRL
+00029080  // sll $18, $2, 2        - $18 = 5 << 2 = 20
+00049902  // srl $19, $4, 4        - $19 = 10 >> 4 = 0
+
+// Set Less Than: SLT, SLTI, SLTU, SLTIU
+0044A02A  // slt $20, $2, $4       - $20 = (5 < 10) = 1
+0044A82B  // sltu $21, $2, $4      - $21 = (5 < 10) = 1
+2855000A  // slti $21, $2, 10      - $21 = (5 < 10) = 1
+2C56000A  // sltiu $22, $2, 10     - $22 = (5 < 10) = 1
+
+// Store results to memory (addresses 128-147 decimal = 0x80-0x93)
+AC010080  // sw $1, 128($0)        - Store $1=8 to Mem[128]
+AC070084  // sw $7, 132($0)        - Store $7=-5 to Mem[132]
+AC080088  // sw $8, 136($0)        - Store $8=7 to Mem[136]
+AC09008C  // sw $9, 140($0)        - Store $9=8 to Mem[140]
+AC0A0090  // sw $10, 144($0)       - Store $10=50 to Mem[144]
+AC0B0094  // sw $11, 148($0)       - Store $11=0 to Mem[148]
+AC0C0098  // sw $12, 152($0)       - Store $12=2 to Mem[152]
+AC0D009C  // sw $13, 156($0)       - Store $13=1 to Mem[156]
+AC0E00A0  // sw $14, 160($0)       - Store $14=1 to Mem[160]
+AC0F00A4  // sw $15, 164($0)       - Store $15=7 to Mem[164]
+
+// Load and test
+8C170080  // lw $23, 128($0)       - $23 = Mem[128] = 8
+8C180084  // lw $24, 132($0)       - $24 = Mem[132] = -5
+
+// Branch test: BEQ
+10170002  // beq $0, $23, skip1    - Not taken (0 != 8)
+20190001  // addi $25, $0, 1       - $25 = 1 (executed)
+20190002  // addi $25, $0, 2       - $25 = 2 (executed)
+// skip1:
+
+// Branch test: BNE
+14170002  // bne $0, $23, skip2    - Taken (0 != 8)
+201A0001  // addi $26, $0, 1       - NOT executed (skipped)
+201A0002  // addi $26, $0, 2       - NOT executed (skipped)
+// skip2:
+201A0003  // addi $26, $0, 3       - $26 = 3 (executed after branch)
+
+// Jump test: J
+08000048  // j end_prog            - Jump to address 0x48 (instruction 72/4=18 in decimal after converting)
+
+// These instructions should be skipped
+201B0099  // addi $27, $0, 0x99    - Should NOT execute
+201C0099  // addi $28, $0, 0x99    - Should NOT execute
+
+// end_prog: (address should align with jump target)
+AC1900A8  // sw $25, 168($0)       - Store $25 to Mem[168]
+AC1A00AC  // sw $26, 172($0)       - Store $26 to Mem[172]
+
+// Jump Register test
+20BF0000  // addi $31, $0, 0       - Set $31 to a return address
+03E00008  // jr $31                - Jump to address in $31 (should end/loop)
+
+// NOP instructions to prevent undefined behavior
+00000000  // nop
+00000000  // nop
+00000000  // nop
