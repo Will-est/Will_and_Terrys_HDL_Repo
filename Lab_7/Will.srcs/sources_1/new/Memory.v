@@ -6,19 +6,17 @@ module Memory(CS, WE, CLK, ADDR, Mem_Bus);
   inout [31:0] Mem_Bus;
 
   reg [31:0] data_out;
-  reg [31:0] RAM [0:127];
-
+  reg [31:0] RAM [0:11];
 
   initial
   begin
-    $readmemh("memory_init.txt", RAM, 0, 127);
+    $readmemh("memory_init.mem",RAM, 0, 11);
   end
 
   assign Mem_Bus = ((CS == 1'b0) || (WE == 1'b1)) ? 32'bZ : data_out;
 
   always @(negedge CLK)
   begin
-
     if((CS == 1'b1) && (WE == 1'b1))
       RAM[ADDR] <= Mem_Bus[31:0];
 

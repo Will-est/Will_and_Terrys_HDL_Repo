@@ -20,17 +20,21 @@
 //////////////////////////////////////////////////////////////////////////////////
 
 
-module top(CLK, RST);
+module top(clk, RST, Halt, LEDS);
 // This is your top module for synthesis.
   // You define what signals the top module needs.
-  input CLK;
-  input RST;
-
-  wire CS, WE;
-  wire [6:0] ADDR;
-  wire [31:0] Mem_Bus;
-
-  MIPS CPU(CLK, RST, CS, WE, ADDR, Mem_Bus);
-  Memory MEM(CS, WE, CLK, ADDR, Mem_Bus);
+    input clk;
+    input RST;
+    input Halt;
+    output [7:0] LEDS;
+    
+    wire CS, WE;
+    wire [6:0] ADDR;
+    wire [31:0] Mem_Bus;
+    wire slow_clk;
+    
+    clk_divider clk_divider(clk,slow_clk);
+    MIPS CPU(slow_clk, RST, CS, WE, ADDR, Mem_Bus,Halt,LEDS);
+    Memory MEM(CS, WE, slow_clk, ADDR, Mem_Bus);
 
 endmodule

@@ -4,10 +4,12 @@
 `define f_code instr[5:0]
 `define numshift instr[10:6]
 
-module MIPS (CLK, RST, CS, WE, ADDR, Mem_Bus);
+module MIPS (CLK, RST, CS, WE, ADDR, Mem_Bus, Halt, LEDS);
   input CLK, RST;
+  input Halt;
   output reg CS, WE;
   output [6:0] ADDR;
+  output [7:0] LEDS;
   inout [31:0] Mem_Bus;
 
   //special instructions (opcode == 000000), values of F code (bits 5-0):
@@ -59,7 +61,7 @@ module MIPS (CLK, RST, CS, WE, ADDR, Mem_Bus);
 
   //drive memory bus only during writes
   assign ADDR = (fetchDorI)? pc : alu_result_save[6:0]; //ADDR Mux
-  REG Register(CLK, regw, dr, `sr1, `sr2, reg_in, readreg1, readreg2);
+  REG Register(CLK, regw, dr, `sr1, `sr2, reg_in, readreg1, readreg2, LEDS);
 
   initial begin
     op = and1; opsave = and1;
@@ -70,6 +72,7 @@ module MIPS (CLK, RST, CS, WE, ADDR, Mem_Bus);
     writing = 0;
     reg_or_imm = 0; reg_or_imm_save = 0;
     alu_or_mem_save = 0;
+    pc = 7'd0;
   end
 
   always @(*)
@@ -136,11 +139,23 @@ module MIPS (CLK, RST, CS, WE, ADDR, Mem_Bus);
           CS = 1;
           nstate = 3'd4;
         end
+        if (Halt == 1) begin
+            nstate = 4'd5;
+        end
+        
       end
       4: begin
         nstate = 3'd0;
         CS = 1;
         if (`opcode == lw) regw = 1;
+      end
+      5:begin // Halt
+        if(Halt == 1)begin
+            nstate = 3'd5;
+        end else begin
+            nstate = 3'd0;
+        end
+         
       end
     endcase
   end //always

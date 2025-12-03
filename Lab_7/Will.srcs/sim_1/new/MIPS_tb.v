@@ -33,7 +33,7 @@ module MIPS_tb();
     
     // Load instructions from file into memory
     $display("\n[%0t] Loading instructions from file...", $time);
-    $readmemh("instructions.txt", memory_init.txt);
+    //$readmemh("Text/instructions.txt", memory_init.txt);
     $display("[%0t] Instructions loaded successfully", $time);
     
     // Hold reset for 2 clock cycles
@@ -71,8 +71,8 @@ module MIPS_tb();
     // Display relevant memory locations
     // Adjust addresses based on where your program stores results
     for (i = 128; i < 150; i = i + 1) begin
-      if (MEM.Mem[i] !== 32'hxxxxxxxx && MEM.Mem[i] !== 32'h00000000) begin
-        $display("Mem[%0d] = 0x%h (%0d decimal)", i, MEM.Mem[i], MEM.Mem[i]);
+      if (MEM.RAM[i] !== 32'hxxxxxxxx && MEM.RAM[i] !== 32'h00000000) begin
+        $display("Mem[%0d] = 0x%h (%0d decimal)", i, MEM.RAM[i], MEM.RAM[i]);
       end
     end
     

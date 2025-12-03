@@ -1,23 +1,3 @@
-`timescale 1ns / 1ps
-//////////////////////////////////////////////////////////////////////////////////
-// Company: 
-// Engineer: 
-// 
-// Create Date: 11/28/2025 08:21:34 PM
-// Design Name: 
-// Module Name: Book_MIPS_tb
-// Project Name: 
-// Target Devices: 
-// Tool Versions: 
-// Description: 
-// 
-// Dependencies: 
-// 
-// Revision:
-// Revision 0.01 - File Created
-// Additional Comments:
-// 
-//////////////////////////////////////////////////////////////////////////////////
 
 
 module Book_MIPS_tb;    
@@ -35,7 +15,7 @@ module Book_MIPS_tb;
     integer i;
         
     MIPS CPU(CLK, rst, CS, WE, Address, Mem_Bus_Wire);
-    Memory MEM(CS_Mux, WE_Mux, CLK, Address_Mux, Mem_Bus_Wire);
+    Memory MEM(CS_Mux, WE_Mux, CLK, Address, Mem_Bus_Wire);
     
     assign Address_Mux = (init)? AddressTB : Address;
     assign WE_Mux = (init)? WE_TB : WE;
@@ -44,18 +24,18 @@ module Book_MIPS_tb;
     always #10 CLK = ~CLK;        
     
     initial begin
-      expected[1] = 32'h00000006; // $1 content=6 decimal
-      expected[2] = 32'h00000012; // $2 content=18 decimal
-      expected[3] = 32'h00000018; // $3 content=24 decimal
-      expected[4] = 32'h0000000C; // $4 content=12 decimal
-      expected[5] = 32'h00000002; // $5 content=2
-      expected[6] = 32'h00000016; // $6 content=22 decimal
-      expected[7] = 32'h00000001; // $7 content=1
-      expected[8] = 32'h00000120; // $8 content=288 decimal
-      expected[9] = 32'h00000003; // $9 content=3
-      expected[10] = 32'h00412022; // $10 content=5th instr      
-      CLK = 0;
-    end
+        expected[1] = 32'h00000006; // $1 content=6 decimal
+        expected[2] = 32'h00000012; // $2 content=18 decimal
+        expected[3] = 32'h00000018; // $3 content=24 decimal
+        expected[4] = 32'h0000000C; // $4 content=12 decimal
+        expected[5] = 32'h00000002; // $5 content=2
+        expected[6] = 32'h00000016; // $6 content=22 decimal
+        expected[7] = 32'h00000001; // $7 content=1
+        expected[8] = 32'h00000120; // $8 content=288 decimal
+        expected[9] = 32'h00000003; // $9 content=3
+        expected[10] = 32'h00412022; // $10 content=5th instr      
+        CLK = 0;
+    end 
     always begin
         rst = 1;        
         @(posedge CLK); //wait until posedge CLK
@@ -65,14 +45,13 @@ module Book_MIPS_tb;
         CS_TB <= 0; WE_TB <= 0; init <= 0;
         @(posedge CLK);
         rst <= 0;
-        
-         for(i = 1; i <= N; i = i+1) begin
+        for(i = 1; i <= N; i = i+1) begin
             @(posedge WE); // When a store word is executed
             @(negedge CLK);
             if (Mem_Bus_Wire != expected[i])
-            $display ("Output mismatch: got %d, expect %d", Mem_Bus_Wire, expected[i]);
-         end
-     $display("Testing Finished:"); 
-     $stop;
-     end    
+                $display ("Output mismatch: got %d, expect %d", Mem_Bus_Wire, expected[i]);
+        end
+        $display("Testing Finished:"); 
+        $stop;
+    end    
 endmodule
