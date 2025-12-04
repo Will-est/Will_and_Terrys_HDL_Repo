@@ -21,7 +21,7 @@
 
 
 // You can use this skeleton testbench code, the textbook testbench code, or your own
-module top_tb ();
+module Main_Tb ();
     parameter N = 60;
     // MIPS stuff
     reg CLK;

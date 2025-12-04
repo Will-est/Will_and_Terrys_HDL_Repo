@@ -1,0 +1,45 @@
+20260000   
+31080000    
+lui $4, 28672
+lui $5, 32767
+ori $8, $8, 11
+
+1026ffff   
+20260000    
+000004e1    
+01073820    
+jr $7
+08000006
+
+call_table:
+jal operation0
+08000006
+jal operation1
+08000006
+jal operation2
+08000006
+jal operation3
+08000006
+jal operation4
+08000006
+jal operation5
+08000006
+
+operation0:
+add8 $2, $4, $5
+jr $31
+operation1:
+lui $2, 4096
+jr $31
+operation2:
+rbit $2, $5
+jr $31
+operation3:
+rev $2, $4
+jr $31
+operation4:
+sadd $2, $5, $5
+jr $31
+operation5:
+ssub $2, $4, $5
+jr $31
