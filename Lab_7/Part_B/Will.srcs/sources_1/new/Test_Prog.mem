@@ -1,45 +1,50 @@
 20260000   
-31080000    
-lui $4, 28672
-lui $5, 32767
-ori $8, $8, 11
+31080000
+3c048000
+3ca57fff
+3508000b
 
 1026ffff   
 20260000    
 000004e1    
-01073820    
-jr $7
+01073820
+00e00008
 08000006
-
 call_table:
 jal operation0
+0c000016
 08000006
 jal operation1
+0c000018
 08000006
 jal operation2
+0c00001a
 08000006
 jal operation3
+0c00001c
 08000006
 jal operation4
+0c00001e
 08000006
 jal operation5
+0c000020
 08000006
 
 operation0:
-add8 $2, $4, $5
-jr $31
+0085182d
+03e00008
 operation1:
-lui $2, 4096
-jr $31
+3c021000
+03e00008
 operation2:
-rbit $2, $5
-jr $31
+00a2102f
+03e00008
 operation3:
-rev $2, $4
-jr $31
+00821030
+03e00008
 operation4:
-sadd $2, $5, $5
-jr $31
+0a511031
+03e00008
 operation5:
-ssub $2, $4, $5
-jr $31
+00851032
+03e00008

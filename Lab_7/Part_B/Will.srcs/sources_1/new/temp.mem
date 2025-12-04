@@ -1,0 +1,67 @@
+20260000   
+31080000    
+lui $4, 28672
+(3c048000)
+lui $5, 32767
+(3ca57fff)
+ori $8, $8, 11
+(3508000b)
+
+1026ffff   
+20260000    
+000004e1    
+01073820    
+jr $7
+(00e00008)
+08000006
+
+call_table:
+jal operation0
+(0c000016)
+08000006
+jal operation1
+(0c000018)
+08000006
+jal operation2
+(0c00001a)
+08000006
+jal operation3
+(0c00001c)
+08000006
+jal operation4
+(0c00001e)
+08000006
+jal operation5
+(0c000020)
+08000006
+
+operation0:
+add8 $2, $4, $5
+(0085182d)
+jr $31
+(03e00008)
+operation1:
+lui $2, 4096
+(3c021000)
+jr $31
+(03e00008)
+operation2:
+rbit $2, $5
+(00a2102f)
+jr $31
+(03e00008)
+operation3:
+rev $2, $4
+(00821030)
+jr $31
+(03e00008)
+operation4:
+sadd $2, $5, $5
+(0a511031)
+jr $31
+(03e00008)
+operation5:
+ssub $2, $4, $5
+(00851032)
+jr $31
+(03e00008)
