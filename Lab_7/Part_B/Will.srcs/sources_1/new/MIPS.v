@@ -4,13 +4,14 @@
 `define f_code instr[5:0]
 `define numshift instr[10:6]
 
-module MIPS (CLK, RST, CS, WE, ADDR, Mem_Bus, Halt, LEDS);
-  input CLK, RST;
-  input Halt;
+module MIPS (CLK, reset, CS, WE, ADDR, Halt, Mem_Bus, R1Val, R2Val, R1);
+  input CLK, reset, Halt;
   output reg CS, WE;
   output [6:0] ADDR;
-  output [7:0] LEDS;
+  output wire [31:0] R1Val, R2Val;
   inout [31:0] Mem_Bus;
+  
+  input wire [2:0] R1;
 
   //special instructions (opcode == 000000), values of F code (bits 5-0):
   parameter add = 6'b100000;
@@ -60,11 +61,18 @@ module MIPS (CLK, RST, CS, WE, ADDR, Mem_Bus, Halt, LEDS);
   reg [2:0] state, nstate;
   
   //additional signals
+  reg [31:0] jal_pc;
   reg jal_reg_en; // here is the signal that says to set dr to 31 if we're doing jal
-
+  wire[5:0] sr1_out;
+  wire[5:0] sr2_out;
+  wire[5:0] opcode_out;
+  assign opcode_out = `opcode;
+  assign sr1_out = `sr1;
+  assign sr2_out = `sr2;
+  
   //combinational
   assign imm_ext = (instr[15] == 1)? {16'hFFFF, instr[15:0]} : {16'h0000, instr[15:0]};//Sign extend immediate field
-  assign dr = (jal_reg_en) ? 5'd31 : (format == R)? instr[15:11] : instr[20:16]; //Destination Register MUX (MUX1)
+  assign dr = (`opcode == jal) ? 5'd31 : ((instr[5:0] == rbit)||(instr[5:0] == rev)) ? instr[25:21] : (format == R)? instr[15:11] : instr[20:16]; //Destination Register MUX (MUX1)
   assign alu_in_A = readreg1;
   assign alu_in_B = (reg_or_imm_save)? imm_ext : readreg2; //ALU MUX (MUX2)
   assign reg_in = (alu_or_mem_save)? Mem_Bus : alu_result_save; //Data MUX
@@ -73,7 +81,7 @@ module MIPS (CLK, RST, CS, WE, ADDR, Mem_Bus, Halt, LEDS);
 
   //drive memory bus only during writes
   assign ADDR = (fetchDorI)? pc : alu_result_save[6:0]; //ADDR Mux
-  REG Register(CLK, regw, dr, `sr1, `sr2, reg_in, readreg1, readreg2, LEDS);
+  REG Register(CLK, regw, dr, `sr1, `sr2, reg_in, readreg1, readreg2, R1Val, R2Val, R1);
 
   initial begin
     op = and1; opsave = and1;
@@ -87,7 +95,7 @@ module MIPS (CLK, RST, CS, WE, ADDR, Mem_Bus, Halt, LEDS);
     pc = 7'd0;
     
     // my signals I need to initialize
-    jal_reg_en = 0;
+    jal_pc = 32'd0;
   end
 
   always @(*)
@@ -102,12 +110,16 @@ module MIPS (CLK, RST, CS, WE, ADDR, Mem_Bus, Halt, LEDS);
       1: begin //decode
         nstate = 3'd2; reg_or_imm = 0; alu_or_mem = 0;
         if (format == J) begin //jump, and finish
-          npc = instr[6:0];
-          nstate = 3'd0;
+
           // Special Case for JAL
-          if(`opcode == jal)
-            // assigns destination to be 31
-            jal_reg_en = 5'd31; 
+          if(`opcode == jal) begin
+            nstate = 3'd2;
+            jal_pc = pc;
+          end else begin
+              npc = instr[6:0];
+              nstate = 3'd0;
+          end
+          
         end
         else if (format == R) //register instructions
           op = `f_code;
@@ -117,7 +129,9 @@ module MIPS (CLK, RST, CS, WE, ADDR, Mem_Bus, Halt, LEDS);
             op = add;
             alu_or_mem = 1;
           end
-          else if ((`opcode == lw)||(`opcode == sw)||(`opcode == addi)||(`opcode == lui)) op = add; // lui is added here cuz it's just R0 + offset
+          if(`opcode == lui)
+            op = lui;
+          else if ((`opcode == lw)||(`opcode == sw)||(`opcode == addi)) op = add; // lui is added here cuz it's just R0 + offset
           else if ((`opcode == beq)||(`opcode == bne)) begin
             op = sub;
             reg_or_imm = 0;
@@ -144,14 +158,19 @@ module MIPS (CLK, RST, CS, WE, ADDR, Mem_Bus, Halt, LEDS);
         else if (opsave == jr) begin
           npc = alu_in_A[6:0];
           nstate = 3'd0;
+          // JAL stuff
+          if (`opcode == jal) begin
+            alu_result = jal_pc;
+            nstate = 3'd3;
+          end
         end
-        // extra states
-        else if (`opcode == jal)
-            alu_result = npc;
+        else if( opsave == lui) begin
+            alu_result = alu_in_B << 16;
+        end
         else if (opsave == rbit)
-            alu_result = {alu_in_A[0], alu_in_A[1], alu_in_A[2], alu_in_A[3], alu_in_A[4], alu_in_A[5], alu_in_A[6], alu_in_A[7], alu_in_A[8], alu_in_A[9], alu_in_A[10], alu_in_A[11], alu_in_A[12], alu_in_A[13], alu_in_A[14], alu_in_A[15], alu_in_A[16], alu_in_A[17], alu_in_A[18], alu_in_A[19], alu_in_A[20], alu_in_A[21], alu_in_A[22], alu_in_A[23], alu_in_A[24], alu_in_A[25], alu_in_A[26], alu_in_A[27], alu_in_A[28], alu_in_A[29], alu_in_A[30], alu_in_A[31]};
+            alu_result = {alu_in_B[0], alu_in_B[1], alu_in_B[2], alu_in_B[3], alu_in_B[4], alu_in_B[5], alu_in_B[6], alu_in_B[7], alu_in_B[8], alu_in_B[9], alu_in_B[10], alu_in_B[11], alu_in_B[12], alu_in_B[13], alu_in_B[14], alu_in_B[15], alu_in_B[16], alu_in_B[17], alu_in_B[18], alu_in_B[19], alu_in_B[20], alu_in_B[21], alu_in_B[22], alu_in_B[23], alu_in_B[24], alu_in_B[25], alu_in_B[26], alu_in_B[27], alu_in_B[28], alu_in_B[29], alu_in_B[30], alu_in_B[31]};
         else if (opsave == rev)
-            alu_result = {alu_in_A[7:0], alu_in_A[15:8], alu_in_A[23:16], alu_in_A[31:24]};
+            alu_result = {alu_in_B[7:0], alu_in_B[15:8], alu_in_B[23:16], alu_in_B[31:24]};
          else if (opsave == add8) begin 
             alu_result[31:24] = alu_in_A[31:24] + alu_in_B[31:24];
             alu_result[23:16] = alu_in_A[23:16] + alu_in_B[23:16];
@@ -165,18 +184,20 @@ module MIPS (CLK, RST, CS, WE, ADDR, Mem_Bus, Halt, LEDS);
                 alu_result = alu_in_A + alu_in_B;      
          end
          else if (opsave == ssub) begin
-         if(alu_in_A >= alu_in_B)
+         if(alu_in_B >= alu_in_A)
                 alu_result = 32'd0;
             else 
-                alu_result = alu_in_B - alu_in_A;
+                alu_result = alu_in_A - alu_in_B;
          end
-            
-        if (`opcode == lui)
-            alu_result = alu_result << 16; // shifts the alu results which should have the offset added to 0
       end
       3: begin //prepare to write to mem
         nstate = 3'd0;
-        if ((format == R)||(`opcode == addi)||(`opcode == andi)||(`opcode == ori)||(`opcode == jal)) regw = 1;
+        if ((format == R)||(`opcode == addi)||(`opcode == andi)||(`opcode == ori)||(`opcode == lui)) regw = 1;
+        else if(`opcode == jal)begin
+            regw = 1;
+            nstate = 3'd0;
+            npc = instr[6:0];
+        end
         else if (`opcode == sw) begin 
           CS = 1;
           WE = 1;
@@ -195,9 +216,6 @@ module MIPS (CLK, RST, CS, WE, ADDR, Mem_Bus, Halt, LEDS);
         nstate = 3'd0;
         CS = 1;
         if (`opcode == lw) regw = 1;
-        
-        // any reseting that needs to be done
-        jal_reg_en = 0;
       end
       5:begin // Halt
         if(Halt == 1)begin
@@ -212,7 +230,7 @@ module MIPS (CLK, RST, CS, WE, ADDR, Mem_Bus, Halt, LEDS);
 
   always @(posedge CLK) begin
 
-    if (RST) begin
+    if (reset) begin
       state <= 3'd0;
       pc <= 7'd0;
     end

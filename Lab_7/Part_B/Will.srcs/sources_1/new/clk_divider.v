@@ -24,8 +24,8 @@ module clk_divider(clk, slowClk);
   input clk; //fast clock
   output slowClk; //slow clock
 
-  reg[25:0] counter;
-  assign slowClk= counter[25];  //(2^27 / 100E6) = 1.34seconds
+  reg[24:0] counter;
+  assign slowClk= counter[24];  //(2^27 / 100E6) = 1.34seconds
 
   initial begin
     counter = 0;

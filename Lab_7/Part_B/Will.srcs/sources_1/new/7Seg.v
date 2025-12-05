@@ -3,9 +3,9 @@
 // Company: 
 // Engineer: 
 // 
-// Create Date: 12/03/2025 01:10:30 AM
+// Create Date: 12/04/2025 05:18:40 AM
 // Design Name: 
-// Module Name: clk_divider
+// Module Name: 7Seg
 // Project Name: 
 // Target Devices: 
 // Tool Versions: 
@@ -20,20 +20,7 @@
 //////////////////////////////////////////////////////////////////////////////////
 
 
-module clk_divider(clk, slowClk);
-  input clk; //fast clock
-  output slowClk; //slow clock
+module 7Seg(
 
-  reg[24:0] counter;
-  assign slowClk= counter[24];  //(2^27 / 100E6) = 1.34seconds
-
-  initial begin
-    counter = 0;
-  end
-
-  always @ (posedge clk)
-  begin
-    counter <= counter + 1; //increment the counter every 10ns (1/100 Mhz) cycle.
-  end
-
+    );
 endmodule

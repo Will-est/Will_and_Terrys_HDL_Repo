@@ -36,6 +36,7 @@ module REG(CLK, RegW, DR, SR1, SR2, Reg_In, ReadReg1, ReadReg2, LEDS);
   initial begin
     ReadReg1 = 0;
     ReadReg2 = 0;
+    $readmemh("REG_INIT.mem",REG, 0, 31);
   end
 
   always @(posedge CLK)

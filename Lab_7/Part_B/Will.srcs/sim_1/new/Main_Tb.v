@@ -29,15 +29,16 @@ module Main_Tb ();
     wire WE;
     wire [31:0] Mem_Bus_Wire;
     wire [6:0] Address;
-    wire [7:0] LEDS;
     
    
     // tb stuff
     integer i;
     reg[31:0] expected[N:1];
-    reg rst;
+    reg reset;
+    reg Halt;
+    reg [2:0] SW;
     
-    MIPS CPU(.CLK(CLK), .RST(rst), .CS(CS), .WE(WE), .ADDR(Address), .Mem_Bus(Mem_Bus_Wire),.Halt(Halt), .LEDS(LEDS));
+    MIPS CPU(CLK, reset, CS, WE, Address, HALT, Mem_Bus_Wire, R1Val, R2Val, SW);
     Memory MEM(CS, WE, CLK, Address, Mem_Bus_Wire);
   
   
@@ -54,18 +55,21 @@ module Main_Tb ();
       expected[8] = 32'h00000120; // $8 content=288 decimal
       expected[9] = 32'h00000003; // $9 content=3
       expected[10] = 32'h00412022; // $10 content=5th instr
-      CLK = 1;    
+      CLK = 1;  
+      Halt = 0;  
     end
     initial
     begin
-        #10 rst = 1;
-        #10 rst = 0;
+        #10 reset = 1;
+        #10 reset = 0;
         i = 1;
         repeat(N) begin        
             @(posedge CLK);            
             $display ("Memory at Cycle %d Address %h was %h. CS was: %b WE was: %b", i, Address, Mem_Bus_Wire, CS, WE);            
             i = i + 1;
             // AddressTB = AddressTB + 1; // if you want to manually walk through memory
+            if(i >= 16)
+               SW = 3'd1;
          end
              
         $display("TEST COMPLETE");

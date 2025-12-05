@@ -1,39 +1,20 @@
-`timescale 1ns / 1ps
-//////////////////////////////////////////////////////////////////////////////////
-// Company: 
-// Engineer: 
-// 
-// Create Date: 11/27/2025 02:37:15 AM
-// Design Name: 
-// Module Name: REG
-// Project Name: 
-// Target Devices: 
-// Tool Versions: 
-// Description: 
-// 
-// Dependencies: 
-// 
-// Revision:
-// Revision 0.01 - File Created
-// Additional Comments:
-// 
-//////////////////////////////////////////////////////////////////////////////////
-
-module REG(CLK, RegW, DR, SR1, SR2, Reg_In, ReadReg1, ReadReg2, LEDS);
+module REG(CLK, RegW, DR, SR1, SR2, Reg_In, ReadReg1, ReadReg2, R1Val, R2Val, R1);
   input CLK;
   input RegW;
   input [4:0] DR;
   input [4:0] SR1;
   input [4:0] SR2;
+  input [2:0] R1;
   input [31:0] Reg_In;
   output reg [31:0] ReadReg1;
   output reg [31:0] ReadReg2;
-  output [7:0] LEDS;
+  output reg [31:0] R1Val, R2Val;
 
   reg [31:0] REG [0:31];
   integer i;
-  
+
   initial begin
+    $readmemh("REG_INIT.mem",REG, 0, 31);
     ReadReg1 = 0;
     ReadReg2 = 0;
   end
@@ -46,8 +27,8 @@ module REG(CLK, RegW, DR, SR1, SR2, Reg_In, ReadReg1, ReadReg2, LEDS);
 
     ReadReg1 <= REG[SR1];
     ReadReg2 <= REG[SR2];
+    REG[1] <= {29'd0, R1};
+    R2Val <= REG[2];
+    R1Val <= R1;
   end
-  
-  
-  assign LEDS = REG[1][7:0];
 endmodule

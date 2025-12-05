@@ -6,11 +6,11 @@ module Memory(CS, WE, CLK, ADDR, Mem_Bus);
   inout [31:0] Mem_Bus;
 
   reg [31:0] data_out;
-  reg [31:0] RAM [0:11];
+  reg [31:0] RAM [0:36];
 
   initial
   begin
-    $readmemh("memory_init.mem",RAM, 0, 11);
+    $readmemb("Test_Prog_2.mem",RAM, 0, 36);
   end
 
   assign Mem_Bus = ((CS == 1'b0) || (WE == 1'b1)) ? 32'bZ : data_out;
