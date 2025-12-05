@@ -1,7 +1,7 @@
-module top(CLK, reset, Halt, LEDS, BTNL, BTNR, AN, SEGS, SW, reset_out);
+module top(clk, reset, Halt, LEDS, BTNL, BTNR, AN, SEGS, SW, reset_out);
   // This is your top module for synthesis.
   // You define what signals the top module needs.
-  input CLK;
+  input clk;
   input reset;
   input Halt;
   input BTNL;
@@ -21,9 +21,9 @@ module top(CLK, reset, Halt, LEDS, BTNL, BTNR, AN, SEGS, SW, reset_out);
   wire [15:0] regVal;
   
   
-  Seven_Segment Display(CLK, reset, regVal, AN, SEGS);
-  MIPS CPU(CLK, reset, CS, WE, Address, Halt, Mem_Bus, R1Val, R2Val, SW);
-  Memory MEM(CS, WE, CLK, Address, Mem_Bus);
+  Seven_Segment Display(clk, reset, regVal, AN, SEGS);
+  MIPS CPU(clk, reset, CS, WE, Address, Halt, Mem_Bus, R1Val, R2Val, SW);
+  Memory MEM(CS, WE, clk, Address, Mem_Bus);
   
   //assign regVal = ((BTNLdb) ? ((BTNRdb) ? (R2Val[31:16]) : (R2Val[15:0])) : (R1Val[15:0]));
  assign regVal = (BTNR) ? (R2Val[31:16]) : (R2Val[15:0]);

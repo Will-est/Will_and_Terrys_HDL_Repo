@@ -23,48 +23,61 @@
 module Segment_Multiplexer(
     input clk,
     input reset,
-    input [6:0] in0,
-    input [6:0] in1,
-    input [6:0] in2,
-    input [6:0] in3,
-    output reg [3:0] an,
-    output reg [6:0] sseg
+    input [6:0] ones_lcd,
+    input [6:0] tens_lcd,
+    input [6:0] hundreds_lcd,
+    input [6:0] thousands_lcd,
+    output wire [3:0] enabled_lcd_out,
+    output wire [6:0] lcd_out
 );
-    reg [1:0] state;
-    reg [1:0] next_state;
-    always @ (*) begin // state transition
-        case(state)
-        2'b00: next_state = 2'b01;
-        2'b01: next_state = 2'b10;
-        2'b10: next_state = 2'b11;
-        2'b11: next_state = 2'b00;
-        endcase
+//    // Connecting Wires -----------------------------------------------------------------------------
+//    wire [6:0] ones_lcd;
+//    wire [6:0] tens_lcd;
+//    wire [6:0] hundreds_lcd;
+//    wire [6:0] thousands_lcd;
+    
+    // LCD switching  -------------------------------------------------------------------------
+    
+    // LCD enable logic
+    // keeps track of what we are enabling when not resetting
+    reg [3:0] enabled_lcd_count;            
+    
+    // Start by enabling the first segment
+    initial enabled_lcd_count = 4'b0001;
+    
+    // either output the count or enable all of them for the reset(active low)
+    assign enabled_lcd_out = (reset) ? 7'hef : (~enabled_lcd_count);    
+
+    // toggles which segment is enabled
+    always@(posedge clk)
+    begin                   
+        // shift the toggle bit over 
+        enabled_lcd_count = enabled_lcd_count << 1;     
+        // set the count to 1 if the enable bit got shifted out                    
+        if( enabled_lcd_count == 4'b0000) enabled_lcd_count = 4'b0001;   
     end
     
-     always @ (*) begin //mux
-        case(state)
-        2'b00: sseg = in0;
-        2'b01: sseg = in1;
-        2'b10: sseg = in2;
-        2'b11: sseg = in3;
-        endcase
-    end
+    // Counter Outputs -----------------------------------------------------------------------
+//    lcd_output digit_decode_1(.bcd(in0), .segments(ones_lcd)); 
+//    lcd_output digit_decode_2(.bcd(in1), .segments(tens_lcd)); 
+//    lcd_output digit_decode_3(.bcd(in2), .segments(hundreds_lcd)); 
+//    lcd_output digit_decode_4(.bcd(in3), .segments(thousands_lcd)); 
     
-    always @ (*) begin // decoder
-        case(state)
-        2'b00: an = 4'b1110;
-        2'b01: an = 4'b1101;
-        2'b10: an = 4'b1011;
-        2'b11: an = 4'b0111;
-        endcase
-    end
+    // Output MUX ----------------------------------------------------------------------------
+    // Brought to you by GPT
+    assign lcd_out = (enabled_lcd_out == (~4'b0001)) ? ones_lcd :
+                     (enabled_lcd_out == (~4'b0010)) ? tens_lcd :
+                     (enabled_lcd_out == (~4'b0100)) ? hundreds_lcd :
+                     (enabled_lcd_out == (~4'b1000)) ? thousands_lcd :
+                     4'b0000;
+                     
+    // Debugging --------------------------------------------------------------------------------
     
-    always @(posedge clk or posedge reset)
-    begin
-        if(reset)
-            state <= 2'b00;
-        else
-            state <= next_state;
-    end
-    
+    // Debugging BCD selection
+//    assign OUT = (enabled_lcd_out == 4'b0001) ? ones :
+//                     (enabled_lcd_out == 4'b0010) ? tens :
+//                     (enabled_lcd_out == 4'b0100) ? hundreds :
+//                     (enabled_lcd_out == 4'b1000) ? thousands :
+//                     4'b0000;
+//    assign OUT = ones_lcd;
 endmodule
